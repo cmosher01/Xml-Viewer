@@ -1,0 +1,55 @@
+/*
+copied from Modena:
+.tree-cell {
+    -fx-padding: 0.25em;
+    -fx-indent: 1em;
+}
+.tree-cell .label {
+    -fx-padding: 0.0em 0.0em 0.0em 0.25em;
+}
+.tree-cell > .tree-disclosure-node,
+.tree-table-row-cell > .tree-disclosure-node {
+    -fx-padding: 4 6 4 8;
+    -fx-background-color: transparent;
+}
+.tree-cell > .tree-disclosure-node > .arrow,
+.tree-table-row-cell > .tree-disclosure-node > .arrow {
+    -fx-background-color: -fx-text-background-color;
+    -fx-padding: 0.333333em 0.229em 0.333333em 0.229em;
+    -fx-shape: "M 0 -3.5 L 4 0 L 0 3.5 z";
+}
+.tree-cell:expanded > .tree-disclosure-node > .arrow,
+.tree-table-row-cell:expanded > .tree-disclosure-node > .arrow {
+    -fx-rotate: 90;
+}
+*/
+
+
+.tree-cell:selected {
+    /*-fx-background-color: lightyellow;*/
+    -fx-border-color: blue;
+}
+
+
+.tree-cell {
+    -fx-text-fill: black;
+    -fx-padding: 1;
+    -fx-indent: 18;
+    -fx-border-color: lightgray;
+}
+.tree-cell > .tree-disclosure-node {
+    -fx-padding: 0 18 0 0;
+}
+.tree-cell > .tree-disclosure-node > .arrow {
+    -fx-padding: 0;
+    -fx-shape: "M 2 8 H 7 V 3 H 8 V 8 H 13 V 9 H 8 V 14 H 7 V 9 H 2 Z";
+    -fx-position-shape: false;
+    -fx-scale-shape: false;
+    -fx-border-width: 1;
+    -fx-border-style: solid;
+    -fx-border-color: green;
+}
+.tree-cell:expanded > .tree-disclosure-node > .arrow {
+    -fx-rotate: 0;
+    -fx-shape: "M 2 8 H 13 V 9 H 2 Z";
+}
