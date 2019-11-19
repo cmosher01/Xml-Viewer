@@ -7,5 +7,5 @@ java {
 }
 
 application {
-    mainClassName = 'nu.mine.mosher.xml.XmlViewer'
+    mainClassName = 'nu.mine.mosher.xml.viewer.XmlViewer'
 }
