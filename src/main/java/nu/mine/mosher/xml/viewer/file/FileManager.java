@@ -65,7 +65,7 @@ public class FileManager
             this.file = Optional.of(this.framer.getFileToOpen(this.file));
             // TODO detect character encoding
             in = new BufferedInputStream(new FileInputStream(this.file.get()));
-            this.model.open(in);
+//            this.model.open(in);
         } catch (final FrameManager.UserCancelled cancelled) {
             // user pressed the cancel button, so just return
         } catch (final Throwable e) {

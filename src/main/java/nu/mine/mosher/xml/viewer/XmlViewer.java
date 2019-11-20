@@ -37,7 +37,7 @@ public class XmlViewer {
         } finally {
             System.out.flush();
             System.err.flush();
-            System.exit(exit);
+//            System.exit(exit);
         }
     }
 

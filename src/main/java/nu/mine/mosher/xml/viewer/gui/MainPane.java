@@ -7,9 +7,7 @@ package nu.mine.mosher.xml.viewer.gui;
 
 import nu.mine.mosher.xml.viewer.model.DomTreeModel;
 
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTree;
+import javax.swing.*;
 import javax.swing.tree.TreeSelectionModel;
 import java.awt.Dimension;
 import java.awt.GridLayout;
@@ -23,14 +21,20 @@ class MainPane extends JPanel {
         setOpaque(true);
         addNotify();
 
-        final JTree jtree = createTreeControl(model);
-        final JScrollPane scrollpane = createScrollPane(jtree);
+        this.tree = createTreeControl(model);
+        final JScrollPane scrollpane = createScrollPane(this.tree);
 
         add(scrollpane);
     }
 
-    private static JTree createTreeControl(final DomTreeModel model) {
-        final JTree jtree = new JTree(model);
+    public void appendViewMenuItems(JMenu menuView) {
+        this.tree.appendViewMenuItems(menuView);
+    }
+
+    private TreePanel tree;
+
+    private static TreePanel createTreeControl(final DomTreeModel model) {
+        final TreePanel jtree = new TreePanel(model);
 
         jtree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         jtree.setShowsRootHandles(true);

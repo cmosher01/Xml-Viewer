@@ -4,20 +4,12 @@
 package nu.mine.mosher.xml.viewer.model;
 
 
-
 import org.w3c.dom.Document;
 
-import javax.swing.event.TreeModelEvent;
-import javax.swing.event.TreeModelListener;
-import javax.swing.tree.TreeModel;
-import javax.swing.tree.TreePath;
-import java.io.BufferedInputStream;
+import javax.swing.event.*;
+import javax.swing.tree.*;
 import java.io.Closeable;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Observable;
-
+import java.util.*;
 
 
 public class DomTreeModel extends Observable implements TreeModel, Closeable {
@@ -25,48 +17,49 @@ public class DomTreeModel extends Observable implements TreeModel, Closeable {
     private List<TreeModelListener> rListener = new ArrayList<>();
 
 
-    public void open(final BufferedInputStream in) throws InvalidLevel, IOException {
-        final GedcomTree gt = Gedcom.readFile(in);
-        setTree(gt);
-    }
+//    public void open(final BufferedInputStream in) throws InvalidLevel, IOException {
+//        final GedcomTree gt = Gedcom.readFile(in);
+//        setTree(gt);
+//    }
 
     public void close() {
         setTree(null);
     }
 
 
-
     public Object getRoot() {
-        if (this.tree == null) {
-            return null;
-        }
+//        if (this.tree == null) {
+//            return null;
+//        }
 
-        return this.tree.getRoot();
+        return "Testing";
     }
 
     public Object getChild(final Object parent, final int index) {
         if (parent == null) {
             return null;
+        } else {
+            return getRoot();
         }
 
-        final TreeNode<GedcomLine> nodeParent = (TreeNode<GedcomLine>) parent;
-
-        int i = 0;
-        for (final TreeNode<GedcomLine> child : nodeParent) {
-            if (i++ == index) {
-                return child;
-            }
-        }
-        return null;
+//        final TreeNode<GedcomLine> nodeParent = (TreeNode<GedcomLine>) parent;
+//
+//        int i = 0;
+//        for (final TreeNode<GedcomLine> child : nodeParent) {
+//            if (i++ == index) {
+//                return child;
+//            }
+//        }
+//        return null;
     }
 
     public int getChildCount(final Object parent) {
-        if (parent == null) {
-            return 0;
-        }
-
-        final TreeNode<GedcomLine> nodeParent = (TreeNode<GedcomLine>) parent;
-        return nodeParent.getChildCount();
+//        if (parent == null) {
+        return 0;
+//        }
+//
+//        final TreeNode<GedcomLine> nodeParent = (TreeNode<GedcomLine>) parent;
+//        return nodeParent.getChildCount();
     }
 
     public boolean isLeaf(final Object node) {
@@ -78,22 +71,21 @@ public class DomTreeModel extends Observable implements TreeModel, Closeable {
     }
 
     public int getIndexOfChild(final Object parent, final Object child) {
-        if (parent == null || child == null) {
+//        if (parent == null || child == null) {
             return 0;
-        }
-
-        final TreeNode<GedcomLine> nodeParent = (TreeNode<GedcomLine>) parent;
-
-        int i = 0;
-        for (final TreeNode<GedcomLine> c : nodeParent) {
-            if (c == child) {
-                return i;
-            }
-            ++i;
-        }
-        return -1;
+//        }
+//
+//        final TreeNode<GedcomLine> nodeParent = (TreeNode<GedcomLine>) parent;
+//
+//        int i = 0;
+//        for (final TreeNode<GedcomLine> c : nodeParent) {
+//            if (c == child) {
+//                return i;
+//            }
+//            ++i;
+//        }
+//        return -1;
     }
-
 
 
     public void addTreeModelListener(final TreeModelListener listener) {
@@ -105,8 +97,7 @@ public class DomTreeModel extends Observable implements TreeModel, Closeable {
     }
 
 
-
-    private void setTree(final GedcomTree tree) {
+    private void setTree(final Document tree) {
         this.tree = tree;
 
         fireTreeStructureChanged();
@@ -128,9 +119,9 @@ public class DomTreeModel extends Observable implements TreeModel, Closeable {
         if (this.tree == null) {
             root = "";
         } else {
-            root = this.tree.getRoot();
+            root = this.tree;
         }
 
-        return new Object[]{ root };
+        return new Object[]{root};
     }
 }

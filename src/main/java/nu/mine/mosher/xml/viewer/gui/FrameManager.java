@@ -8,12 +8,7 @@ package nu.mine.mosher.xml.viewer.gui;
 import nu.mine.mosher.xml.viewer.XmlViewer;
 import nu.mine.mosher.xml.viewer.model.DomTreeModel;
 
-import javax.swing.JFileChooser;
-import javax.swing.JFrame;
-import javax.swing.JMenuBar;
-import javax.swing.JOptionPane;
-import javax.swing.SwingUtilities;
-import javax.swing.WindowConstants;
+import javax.swing.*;
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
@@ -30,8 +25,10 @@ import java.util.Optional;
 
 
 public class FrameManager implements Closeable {
+
     private final DomTreeModel model;
     private JFrame frame;
+    private MainPane mainPane;
 
     public FrameManager(final DomTreeModel model) {
         this.model = model;
@@ -58,27 +55,24 @@ public class FrameManager implements Closeable {
 
         this.frame.setJMenuBar(bar);
 
-        // Create and set up the content pane.
-        this.frame.setContentPane(new MainPane(this.model));
+        this.mainPane = new MainPane(this.model);
+        this.frame.setContentPane(this.mainPane);
 
-        // Set the window's size and position.
         this.frame.pack();
         this.frame.setLocationRelativeTo(null);
-        //mFrame.setExtendedState(Frame.MAXIMIZED_BOTH);
 
-        // Display the window.
         this.frame.setVisible(true);
 
+    }
+
+    public void appendViewMenuItems(JMenu menuView) {
+        this.mainPane.appendViewMenuItems(menuView);
     }
 
     public void repaint() {
         this.frame.repaint();
     }
 
-    public void updateUi() {
-        setUpUi();
-        SwingUtilities.updateComponentTreeUI(this.frame);
-    }
 
     private static File dir() {
         return new File(XmlViewer.prefs().get("dir", "./"));

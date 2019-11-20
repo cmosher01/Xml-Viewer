@@ -27,16 +27,12 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Consumer;
 
+import static nu.mine.mosher.xml.viewer.XmlViewer.prefs;
 
 
 public class XmlViewerGui implements Runnable, Closeable, Observer {
     public static void gui(final Optional<URL> xml, final Set<URL> schemata) throws InvocationTargetException, InterruptedException {
         SwingUtilities.invokeAndWait(() -> new XmlViewerGui(xml, schemata).run());
-    }
-
-    private XmlViewerGui(Optional<URL> xml, Set<URL> schemata) {
-        this.xml = xml;
-        this.schemata = new HashSet<>(schemata);
     }
 
     private Optional<URL> xml;
@@ -45,6 +41,11 @@ public class XmlViewerGui implements Runnable, Closeable, Observer {
     private final DomTreeModel model = new DomTreeModel();
     private final FrameManager framer = new FrameManager(this.model);
     private final FileManager filer = new FileManager(this.model, this.framer);
+
+    private XmlViewerGui(Optional<URL> xml, Set<URL> schemata) {
+        this.xml = xml;
+        this.schemata = new HashSet<>(schemata);
+    }
 
 
     public void run() {
@@ -57,11 +58,9 @@ public class XmlViewerGui implements Runnable, Closeable, Observer {
         JFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
 
-        // create the application's menu bar
         final JMenuBar menubar = new JMenuBar();
-        appendMenus(menubar);
-
         this.framer.init(menubar, this::close);
+        appendMenus(menubar);
 
         update(this.model, null);
     }
@@ -77,24 +76,8 @@ public class XmlViewerGui implements Runnable, Closeable, Observer {
         this.framer.repaint();
     }
 
-    private void setUpUi() {
-        useUiNamed("nimbus", this::setUiDefaults);
-    }
-
-    private void setUiDefaults(final UIDefaults defs) {
-        defs.put("Tree.drawHorizontalLines", true);
-        defs.put("Tree.drawVerticalLines", true);
-        defs.put("Tree.linesStyle", "dashed");
-        defs.put("Tree.closedIcon", null);
-        defs.put("Tree.openIcon", null);
-        defs.put("Tree.leafIcon", null);
-
-        defs.put("Tree.rowHeight", visualSize *1.2);
-        defs.put("Tree.font", new FontUIResource(new Font(Font.SANS_SERIF, Font.PLAIN, visualSize)));
-        defs.put("Tree.expandedIcon", new Ec(visualSize, -1));
-        defs.put("Tree.collapsedIcon", new Ec(visualSize, +1));
-        defs.put("Tree.leftChildIndent", visualSize);
-        defs.put("Tree.rightChildIndent", visualSize /2);
+    public void setUpUi() {
+        useUiNamed("metal", this::setUiDefaults);
     }
 
     private static void useUiNamed(final String name, final Consumer<UIDefaults> with) {
@@ -131,7 +114,7 @@ public class XmlViewerGui implements Runnable, Closeable, Observer {
 
         final JMenu menuView = new JMenu("View");
         menuView.setMnemonic(KeyEvent.VK_V);
-        appendViewMenuItems(menuView);
+        this.framer.appendViewMenuItems(menuView);
         bar.add(menuView);
 
         final JMenu menuHelp = new JMenu("Help");
@@ -140,7 +123,7 @@ public class XmlViewerGui implements Runnable, Closeable, Observer {
         bar.add(menuHelp);
     }
 
-    private static final int ACCEL = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    public static final int ACCEL = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
     private void appendFileMenuItems(final JMenu menu) {
         final JMenuItem itemFileExit = new JMenuItem("Quit");
@@ -149,23 +132,39 @@ public class XmlViewerGui implements Runnable, Closeable, Observer {
         itemFileExit.addActionListener(e -> close());
         menu.add(itemFileExit);
     }
-    private void appendViewMenuItems(final JMenu menu) {
-        final JMenuItem itemZoomIn = new JMenuItem("Zoom in");
-        itemZoomIn.setMnemonic(KeyEvent.VK_I);
-        itemZoomIn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, ACCEL));
-        itemZoomIn.addActionListener(e -> zoom(+1));
-        menu.add(itemZoomIn);
-        final JMenuItem itemZoomOut = new JMenuItem("Zoom out");
-        itemZoomOut.setMnemonic(KeyEvent.VK_O);
-        itemZoomOut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, ACCEL));
-        itemZoomOut.addActionListener(e -> zoom(-1));
-        menu.add(itemZoomOut);
-    }
 
     private void appendHelpMenuItems(final JMenu menu) {
         final JMenuItem itemAbout = new JMenuItem("About");
         itemAbout.setMnemonic(KeyEvent.VK_A);
         itemAbout.addActionListener(e -> about());
         menu.add(itemAbout);
+    }
+
+    private void about() {
+        this.framer.showMessage(
+            "<html>" +
+                "<p style='font-size:22'>XML Viewer</p><br>" +
+                "Copyright © 2019, Christopher Alan Mosher, Shelton, Connecticut, USA<br>" +
+                "https://github.com/cmosher01" +
+                "</html>");
+    }
+
+
+
+
+    private void setUiDefaults(final UIDefaults defs) {
+//        defs.put("Tree.drawHorizontalLines", true);
+//        defs.put("Tree.drawVerticalLines", true);
+//        defs.put("Tree.linesStyle", "dashed");
+//        defs.put("Tree.closedIcon", null);
+//        defs.put("Tree.openIcon", null);
+//        defs.put("Tree.leafIcon", null);
+//
+//        defs.put("Tree.rowHeight", visualSize *1.2);
+//        defs.put("Tree.font", new FontUIResource(new Font(Font.SANS_SERIF, Font.PLAIN, visualSize)));
+//        defs.put("Tree.expandedIcon", new TreeExpanderIcon(visualSize, -1));
+//        defs.put("Tree.collapsedIcon", new TreeExpanderIcon(visualSize, +1));
+//        defs.put("Tree.leftChildIndent", visualSize);
+//        defs.put("Tree.rightChildIndent", visualSize /2);
     }
 }
