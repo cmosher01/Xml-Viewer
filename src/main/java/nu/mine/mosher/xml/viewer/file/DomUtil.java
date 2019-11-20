@@ -1,4 +1,4 @@
-package nu.mine.mosher.xml.viewer;
+package nu.mine.mosher.xml.viewer.file;
 
 import org.w3c.dom.*;
 

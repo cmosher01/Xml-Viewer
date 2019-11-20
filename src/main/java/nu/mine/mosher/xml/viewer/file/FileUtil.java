@@ -1,4 +1,4 @@
-package nu.mine.mosher.xml.viewer;
+package nu.mine.mosher.xml.viewer.file;
 
 import org.w3c.dom.Document;
 import org.xml.sax.*;
@@ -9,7 +9,7 @@ import java.net.*;
 import java.nio.file.Paths;
 import java.util.Set;
 
-public class FileHandler {
+public class FileUtil {
     public static URL asUrl(final String pathOrUrl) throws IOException {
         Throwable urlExcept ;
         try {
@@ -75,15 +75,15 @@ public class FileHandler {
 
     private static class MyErrorHandler implements ErrorHandler {
         public void warning(SAXParseException spe) throws SAXException {
-            throw new SAXException("WARN " + getParseExceptionInfo(spe));
+            throw new SAXException("WARN " + getParseExceptionInfo(spe), spe);
         }
 
         public void error(SAXParseException spe) throws SAXException {
-            throw new SAXException("ERROR " + getParseExceptionInfo(spe));
+            throw new SAXException("ERROR " + getParseExceptionInfo(spe), spe);
         }
 
         public void fatalError(SAXParseException spe) throws SAXException {
-            throw new SAXException("FATAL " + getParseExceptionInfo(spe));
+            throw new SAXException("FATAL " + getParseExceptionInfo(spe), spe);
         }
 
         private static String getParseExceptionInfo(SAXParseException spe) {

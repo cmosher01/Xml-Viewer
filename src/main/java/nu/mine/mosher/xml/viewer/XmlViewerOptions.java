@@ -4,7 +4,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.util.*;
 
-import static nu.mine.mosher.xml.viewer.FileHandler.asUrl;
+import static nu.mine.mosher.xml.viewer.file.FileUtil.asUrl;
 
 @SuppressWarnings({"WeakerAccess", "OptionalUsedAsFieldOrParameterType"})
 public class XmlViewerOptions {
@@ -14,7 +14,6 @@ public class XmlViewerOptions {
     public final Set<URL> schemata = new HashSet<>();
 
     public void help(Optional<String> value) {
-        System.out.println("usage: xml-viewer [input.xml [schema.xsd [...]]]");
         this.help = true;
     }
 

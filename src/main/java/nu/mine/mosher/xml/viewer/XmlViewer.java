@@ -2,6 +2,9 @@ package nu.mine.mosher.xml.viewer;
 
 import nu.mine.mosher.gnopt.Gnopt;
 import nu.mine.mosher.io.LogFiles;
+import nu.mine.mosher.xml.viewer.file.DomUtil;
+import nu.mine.mosher.xml.viewer.file.FileUtil;
+import nu.mine.mosher.xml.viewer.gui.XmlViewerGui;
 import org.slf4j.*;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
@@ -45,11 +48,11 @@ public class XmlViewer {
             System.out.println("usage: xml-viewer [input.xml [schema.xsd [...]]]");
         } else if (opts.dump) {
             if (opts.xml.isPresent()) {
-                final Document dom = FileHandler.asDom(opts.xml.get(), opts.schemata);
+                final Document dom = FileUtil.asDom(opts.xml.get(), opts.schemata);
                 DomUtil.dump(dom, 0);
             }
         } else {
-            XmlViewerGui.gui(opts);
+            XmlViewerGui.gui(opts.xml, opts.schemata);
         }
     }
 
