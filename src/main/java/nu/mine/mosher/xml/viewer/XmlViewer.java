@@ -20,6 +20,7 @@ public class XmlViewer {
 
     static {
         System.setProperty("org.slf4j.simpleLogger.logFile", LogFiles.getLogFileOf(XmlViewer.class).getPath());
+        System.err.println(System.getProperty("org.slf4j.simpleLogger.logFile"));
         log = LoggerFactory.getLogger(XmlViewer.class);
     }
 
@@ -52,7 +53,7 @@ public class XmlViewer {
                 DomUtil.dump(dom, 0);
             }
         } else {
-            XmlViewerGui.gui(opts.xml, opts.schemata);
+            XmlViewerGui.create(opts.xml, opts.schemata);
         }
     }
 

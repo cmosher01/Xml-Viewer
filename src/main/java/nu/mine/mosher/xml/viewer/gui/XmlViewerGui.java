@@ -2,61 +2,66 @@ package nu.mine.mosher.xml.viewer.gui;
 
 import nu.mine.mosher.xml.viewer.file.FileManager;
 import nu.mine.mosher.xml.viewer.model.DomTreeModel;
+import org.xml.sax.SAXException;
 
-import javax.swing.JDialog;
-import javax.swing.JFrame;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
-import javax.swing.LookAndFeel;
-import javax.swing.SwingUtilities;
-import javax.swing.UIDefaults;
-import javax.swing.UIManager;
-import javax.swing.plaf.FontUIResource;
+import javax.swing.*;
+import javax.xml.parsers.ParserConfigurationException;
 import java.awt.Font;
+import java.awt.FontFormatException;
+import java.awt.GraphicsEnvironment;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.Closeable;
+import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
-import java.util.HashSet;
-import java.util.Observable;
-import java.util.Observer;
-import java.util.Optional;
-import java.util.Set;
-import java.util.function.Consumer;
-
-import static nu.mine.mosher.xml.viewer.XmlViewer.prefs;
+import java.util.*;
 
 
-public class XmlViewerGui implements Runnable, Closeable, Observer {
-    public static void gui(final Optional<URL> xml, final Set<URL> schemata) throws InvocationTargetException, InterruptedException {
-        SwingUtilities.invokeAndWait(() -> new XmlViewerGui(xml, schemata).run());
+
+public class XmlViewerGui implements Closeable, Observer {
+    public static void create(final Optional<URL> xml, final Set<URL> schemata) throws InvocationTargetException, InterruptedException {
+        SwingUtilities.invokeAndWait(() -> {
+            try {
+                new XmlViewerGui().run(Objects.requireNonNull(xml), Objects.requireNonNull(schemata));
+            } catch (Throwable e) {
+                throw new IllegalStateException(e);
+            }
+        });
     }
 
-    private Optional<URL> xml;
-    private final Set<URL> schemata;
-    // private Optional<Node> currentNode;
+//    private Optional<Node> currentNode;
     private final DomTreeModel model = new DomTreeModel();
     private final FrameManager framer = new FrameManager(this.model);
     private final FileManager filer = new FileManager(this.model, this.framer);
 
-    private XmlViewerGui(Optional<URL> xml, Set<URL> schemata) {
-        this.xml = xml;
-        this.schemata = new HashSet<>(schemata);
+    private XmlViewerGui() {
     }
 
 
-    public void run() {
+    public void run(final Optional<URL> xml, final Set<URL> schemata) throws ParserConfigurationException, SAXException, IOException, FontFormatException {
+        if (xml.isPresent()) {
+            this.model.open(xml.get(), schemata);
+        }
         this.model.addObserver(this);
 
-        setUpUi();
+        setLookAndFeel();
 
         // Use look and feel's (not OS's) decorations.
         // Must be done before creating any JFrame or JDialog
         JFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
+
+        final InputStream stream = this.getClass().getClassLoader().getResourceAsStream("NotoSans-Regular.ttf");
+        final Font font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(Font.PLAIN, 10.0f);
+        UIManager.put("MenuBar.font", font);
+        UIManager.put("Menu.font", font);
+//        UIManager.put("Menu.acceleratorFont", font);
+        UIManager.put("MenuItem.font", font);
+//        UIManager.put("MenuItem.acceleratorFont", font);
+        UIManager.put("Tree.font", font);
+        UIManager.put("TitledBorder.font", font);
 
         final JMenuBar menubar = new JMenuBar();
         this.framer.init(menubar, this::close);
@@ -66,42 +71,17 @@ public class XmlViewerGui implements Runnable, Closeable, Observer {
     }
 
 
-    public void close() {
-        // exit the application
-        this.framer.close();
-    }
-
     public void update(final Observable observable, final Object unused) {
-        this.filer.updateMenu();
-        this.framer.repaint();
+//        this.filer.updateMenu();
+//        this.framer.repaint();
     }
 
-    public void setUpUi() {
-        useUiNamed("metal", this::setUiDefaults);
-    }
-
-    private static void useUiNamed(final String name, final Consumer<UIDefaults> with) {
+    public void setLookAndFeel() {
         try {
-            final String className = getClassForUi(name);
-            final LookAndFeel ui = (LookAndFeel)Class.forName(className).newInstance();
-            with.accept(ui.getDefaults());
-            UIManager.setLookAndFeel(ui);
+            UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (final Throwable e) {
-            try {
-                UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
-            } catch (final Throwable e2) {
-                throw new IllegalStateException(e2);
-            }
+            // probably won't fail; but if it does, just continue with whatever the default UI is
         }
-    }
-
-    private static String getClassForUi(final String name) {
-        for (final UIManager.LookAndFeelInfo info : UIManager.getInstalledLookAndFeels()) {
-            if (name.equalsIgnoreCase(info.getName())) {
-                return info.getClassName();
-            }
-        }
-        throw new IllegalStateException();
     }
 
     private void appendMenus(final JMenuBar bar) {
@@ -109,7 +89,7 @@ public class XmlViewerGui implements Runnable, Closeable, Observer {
         menuFile.setMnemonic(KeyEvent.VK_F);
         this.filer.appendMenuItems(menuFile);
         menuFile.addSeparator();
-        appendFileMenuItems(menuFile);
+        addQuitTo(menuFile);
         bar.add(menuFile);
 
         final JMenu menuView = new JMenu("View");
@@ -119,13 +99,13 @@ public class XmlViewerGui implements Runnable, Closeable, Observer {
 
         final JMenu menuHelp = new JMenu("Help");
         menuHelp.setMnemonic(KeyEvent.VK_H);
-        appendHelpMenuItems(menuHelp);
+        addAboutTo(menuHelp);
         bar.add(menuHelp);
     }
 
     public static final int ACCEL = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
-    private void appendFileMenuItems(final JMenu menu) {
+    private void addQuitTo(final JMenu menu) {
         final JMenuItem itemFileExit = new JMenuItem("Quit");
         itemFileExit.setMnemonic(KeyEvent.VK_Q);
         itemFileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ACCEL));
@@ -133,7 +113,12 @@ public class XmlViewerGui implements Runnable, Closeable, Observer {
         menu.add(itemFileExit);
     }
 
-    private void appendHelpMenuItems(final JMenu menu) {
+    public void close() {
+        // exit the application
+        this.framer.close();
+    }
+
+    private void addAboutTo(final JMenu menu) {
         final JMenuItem itemAbout = new JMenuItem("About");
         itemAbout.setMnemonic(KeyEvent.VK_A);
         itemAbout.addActionListener(e -> about());
@@ -147,24 +132,5 @@ public class XmlViewerGui implements Runnable, Closeable, Observer {
                 "Copyright © 2019, Christopher Alan Mosher, Shelton, Connecticut, USA<br>" +
                 "https://github.com/cmosher01" +
                 "</html>");
-    }
-
-
-
-
-    private void setUiDefaults(final UIDefaults defs) {
-//        defs.put("Tree.drawHorizontalLines", true);
-//        defs.put("Tree.drawVerticalLines", true);
-//        defs.put("Tree.linesStyle", "dashed");
-//        defs.put("Tree.closedIcon", null);
-//        defs.put("Tree.openIcon", null);
-//        defs.put("Tree.leafIcon", null);
-//
-//        defs.put("Tree.rowHeight", visualSize *1.2);
-//        defs.put("Tree.font", new FontUIResource(new Font(Font.SANS_SERIF, Font.PLAIN, visualSize)));
-//        defs.put("Tree.expandedIcon", new TreeExpanderIcon(visualSize, -1));
-//        defs.put("Tree.collapsedIcon", new TreeExpanderIcon(visualSize, +1));
-//        defs.put("Tree.leftChildIndent", visualSize);
-//        defs.put("Tree.rightChildIndent", visualSize /2);
     }
 }

@@ -16,6 +16,7 @@ import java.awt.event.KeyEvent;
 import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.util.Collections;
 import java.util.Optional;
 
 
@@ -63,9 +64,8 @@ public class FileManager
 
         try {
             this.file = Optional.of(this.framer.getFileToOpen(this.file));
-            // TODO detect character encoding
-            in = new BufferedInputStream(new FileInputStream(this.file.get()));
-//            this.model.open(in);
+            // TODO how to handle schema?
+            this.model.open(this.file.get().toURI().toURL(), Collections.emptySet());
         } catch (final FrameManager.UserCancelled cancelled) {
             // user pressed the cancel button, so just return
         } catch (final Throwable e) {

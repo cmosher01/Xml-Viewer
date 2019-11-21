@@ -5,6 +5,7 @@ package nu.mine.mosher.xml.viewer.gui;
 import nu.mine.mosher.xml.viewer.model.DomTreeModel;
 
 import javax.swing.*;
+import javax.swing.tree.TreeSelectionModel;
 
 import java.awt.event.KeyEvent;
 
@@ -15,6 +16,12 @@ import static nu.mine.mosher.xml.viewer.gui.XmlViewerGui.ACCEL;
 public class TreePanel extends JTree {
     public TreePanel(DomTreeModel model) {
         super(model);
+    }
+
+    public void init() {
+        getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
+        setShowsRootHandles(true);
+        setRootVisible(true);
     }
 
     private int visualSize = prefZoom();

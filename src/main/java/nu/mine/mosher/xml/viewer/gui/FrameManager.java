@@ -62,17 +62,11 @@ public class FrameManager implements Closeable {
         this.frame.setLocationRelativeTo(null);
 
         this.frame.setVisible(true);
-
     }
 
     public void appendViewMenuItems(JMenu menuView) {
         this.mainPane.appendViewMenuItems(menuView);
     }
-
-    public void repaint() {
-        this.frame.repaint();
-    }
-
 
     private static File dir() {
         return new File(XmlViewer.prefs().get("dir", "./"));
@@ -105,7 +99,7 @@ public class FrameManager implements Closeable {
 
     private static Image getFrameIcon() {
         final BufferedImage bufferedImage = new BufferedImage(200, 200, BufferedImage.TYPE_INT_RGB);
-        final String text = "G";
+        final String text = "X";
         final Rectangle rect = new Rectangle(200, 200);
 
         final Font font = new Font(Font.SANS_SERIF, Font.PLAIN, 128);

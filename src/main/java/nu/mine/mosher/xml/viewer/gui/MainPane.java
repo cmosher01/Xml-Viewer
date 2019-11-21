@@ -8,45 +8,49 @@ package nu.mine.mosher.xml.viewer.gui;
 import nu.mine.mosher.xml.viewer.model.DomTreeModel;
 
 import javax.swing.*;
-import javax.swing.tree.TreeSelectionModel;
+import java.awt.BorderLayout;
 import java.awt.Dimension;
-import java.awt.GridLayout;
 
 
 
 class MainPane extends JPanel {
+    private TreePanel tree;
+    private PropertiesPanel properties;
+
     public MainPane(final DomTreeModel model) {
-        super(new GridLayout(1, 1), true);
+        super(new BorderLayout(), true);
 
         setOpaque(true);
         addNotify();
 
         this.tree = createTreeControl(model);
-        final JScrollPane scrollpane = createScrollPane(this.tree);
+        final JScrollPane scrlTree = createScrollPane(this.tree);
+        scrlTree.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrlTree.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-        add(scrollpane);
+        this.properties = new PropertiesPanel();
+        final JScrollPane scrlProp = createScrollPane(this.properties);
+        scrlProp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
+        scrlProp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
+
+        final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrlTree, scrlProp);
+        add(splitPane);
     }
 
     public void appendViewMenuItems(JMenu menuView) {
         this.tree.appendViewMenuItems(menuView);
     }
 
-    private TreePanel tree;
-
     private static TreePanel createTreeControl(final DomTreeModel model) {
         final TreePanel jtree = new TreePanel(model);
-
-        jtree.getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
-        jtree.setShowsRootHandles(true);
-        jtree.setRootVisible(false);
-
+        jtree.init();
         return jtree;
     }
 
-    private static JScrollPane createScrollPane(final JTree jtree) {
-        final JScrollPane scrollpane = new JScrollPane(jtree);
+    private static JScrollPane createScrollPane(final JComponent c) {
+        final JScrollPane scrollpane = new JScrollPane(c);
 
-        scrollpane.setPreferredSize(new Dimension(640, 480));
+        scrollpane.setPreferredSize(new Dimension(320, 480));
 
         return scrollpane;
     }
