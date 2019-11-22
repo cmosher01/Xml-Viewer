@@ -51,7 +51,7 @@ public class FrameManager implements Closeable {
 
         this.frame.setIconImage(getFrameIcon());
 
-        this.frame.setTitle("GEDCOM Viewer");
+        this.frame.setTitle("Xml-Viewer");
 
         this.frame.setJMenuBar(bar);
 

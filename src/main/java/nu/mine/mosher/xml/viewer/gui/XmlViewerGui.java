@@ -6,17 +6,15 @@ import org.xml.sax.SAXException;
 
 import javax.swing.*;
 import javax.xml.parsers.ParserConfigurationException;
-import java.awt.Font;
-import java.awt.FontFormatException;
-import java.awt.GraphicsEnvironment;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.KeyEvent;
-import java.io.Closeable;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
+
+import static java.awt.Font.PLAIN;
+import static java.awt.Font.SANS_SERIF;
 
 
 
@@ -31,7 +29,6 @@ public class XmlViewerGui implements Closeable, Observer {
         });
     }
 
-//    private Optional<Node> currentNode;
     private final DomTreeModel model = new DomTreeModel();
     private final FrameManager framer = new FrameManager(this.model);
     private final FileManager filer = new FileManager(this.model, this.framer);
@@ -53,15 +50,13 @@ public class XmlViewerGui implements Closeable, Observer {
         JFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
 
-        final InputStream stream = this.getClass().getClassLoader().getResourceAsStream("NotoSans-Regular.ttf");
-        final Font font = Font.createFont(Font.TRUETYPE_FONT, stream).deriveFont(Font.PLAIN, 10.0f);
+        final Font font = new Font(SANS_SERIF, PLAIN, 10);
         UIManager.put("MenuBar.font", font);
         UIManager.put("Menu.font", font);
-//        UIManager.put("Menu.acceleratorFont", font);
         UIManager.put("MenuItem.font", font);
-//        UIManager.put("MenuItem.acceleratorFont", font);
         UIManager.put("Tree.font", font);
         UIManager.put("TitledBorder.font", font);
+        UIManager.put("TextArea.font", font);
 
         final JMenuBar menubar = new JMenuBar();
         this.framer.init(menubar, this::close);
@@ -72,7 +67,7 @@ public class XmlViewerGui implements Closeable, Observer {
 
 
     public void update(final Observable observable, final Object unused) {
-//        this.filer.updateMenu();
+        this.filer.updateMenu();
 //        this.framer.repaint();
     }
 
@@ -128,9 +123,9 @@ public class XmlViewerGui implements Closeable, Observer {
     private void about() {
         this.framer.showMessage(
             "<html>" +
-                "<p style='font-size:22'>XML Viewer</p><br>" +
-                "Copyright © 2019, Christopher Alan Mosher, Shelton, Connecticut, USA<br>" +
-                "https://github.com/cmosher01" +
-                "</html>");
+            "<p style='font-size:22'>XML Viewer</p><br>" +
+            "Copyright © 2019, Christopher Alan Mosher, Shelton, Connecticut, USA<br>" +
+            "https://github.com/cmosher01" +
+            "</html>");
     }
 }

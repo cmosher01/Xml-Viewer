@@ -5,8 +5,10 @@ package nu.mine.mosher.xml.viewer.gui;
 import nu.mine.mosher.xml.viewer.model.DomTreeModel;
 
 import javax.swing.*;
+import javax.swing.tree.DefaultTreeCellRenderer;
 import javax.swing.tree.TreeSelectionModel;
 
+import java.awt.Graphics;
 import java.awt.event.KeyEvent;
 
 import static nu.mine.mosher.xml.viewer.XmlViewer.prefs;
@@ -14,6 +16,8 @@ import static nu.mine.mosher.xml.viewer.gui.XmlViewerGui.ACCEL;
 
 
 public class TreePanel extends JTree {
+    private int visualSize = prefZoom();
+
     public TreePanel(DomTreeModel model) {
         super(model);
     }
@@ -22,15 +26,23 @@ public class TreePanel extends JTree {
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         setShowsRootHandles(true);
         setRootVisible(true);
+        final DefaultTreeCellRenderer renderer = (DefaultTreeCellRenderer)getCellRenderer();
+        renderer.setLeafIcon(null);
+        renderer.setClosedIcon(null);
+        renderer.setOpenIcon(null);
     }
 
-    private int visualSize = prefZoom();
+    @Override
+    protected void paintComponent(final Graphics g) {
+        setFont(getFont().deriveFont(1.0f*visualSize));
+        super.paintComponent(g);
+    }
 
     private static int prefZoom() {
         return prefs().getInt("zoom", 10);
     }
 
-    private static void prefZoom(int zoom) {
+    private static void prefZoom(final int zoom) {
         prefs().putInt("zoom", zoom);
     }
 
@@ -48,9 +60,8 @@ public class TreePanel extends JTree {
     }
 
     private void zoom(final int i) {
-        zoomContrained(4, i*(this.visualSize/16+1), 64);
-        System.out.println("font size: "+this.visualSize);
-        setFont(getFont().deriveFont(1.0f*visualSize));
+        zoomContrained(4, Math.round(i*(this.visualSize/8.0f+1.0f)), 64);
+        repaint();
     }
 
     private void zoomContrained(final int min, final int delta, final int max) {
@@ -64,5 +75,4 @@ public class TreePanel extends JTree {
         }
         prefZoom(this.visualSize);
     }
-
 }

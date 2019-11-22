@@ -13,10 +13,9 @@ import javax.swing.JMenuItem;
 import javax.swing.KeyStroke;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.io.BufferedInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.Collections;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -54,14 +53,12 @@ public class FileManager
 
     public void updateMenu() {
         this.itemFileOpen.setEnabled(true);
-        this.itemFileClose.setEnabled(this.file.isPresent());
+        this.itemFileClose.setEnabled(Objects.nonNull(this.model.getRoot()));
     }
 
 
 
     private void fileOpen() {
-        BufferedInputStream in = null;
-
         try {
             this.file = Optional.of(this.framer.getFileToOpen(this.file));
             // TODO how to handle schema?
@@ -71,19 +68,10 @@ public class FileManager
         } catch (final Throwable e) {
             e.printStackTrace();
             this.framer.showMessage(e.toString());
-        } finally {
-            if (in != null) {
-                try {
-                    in.close();
-                } catch (final Throwable eClose) {
-                    eClose.printStackTrace();
-                }
-            }
         }
     }
 
     private void fileClose() {
-        this.file = Optional.empty();
         this.model.close();
     }
 }

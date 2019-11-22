@@ -57,24 +57,6 @@ public class XmlViewer {
         }
     }
 
-//                final TreeView<Node> treeView = createTree(xml, schemata);
-//
-//                setUserAgentStylesheet(STYLESHEET_MODENA);
-//                SplitPane.setResizableWithParent(treeView, Boolean.FALSE);
-//                final ScrollPane propsView = new ScrollPane(createProps());
-//                propsView.setFitToWidth(true);
-//                final SplitPane splitPane = new SplitPane(treeView, propsView);
-//
-//                final Scene scene = new Scene(splitPane, 1024, 1024);
-//                scene.getStylesheets().add("stylesheet.css");
-//                stage.setScene(scene);
-//
-//                stage.show();
-//            } catch (final Throwable e) {
-//                throw new IllegalStateException(e);
-//            }
-//    }
-//
 //    private GridPane createProps() {
 //        final GridPane props = new GridPane();
 //        props.setPadding(new Insets(40));
@@ -161,29 +143,6 @@ public class XmlViewer {
 //        return tree;
 //    }
 //
-//    private void addChildrenItem(final TreeItem<Node> root) {
-//        final Node node = root.getValue();
-//
-//        if (node.hasAttributes()) {
-//            final NamedNodeMap attrs = node.getAttributes();
-//            for (int i = 0; i < attrs.getLength(); ++i) {
-//                final Node attr = attrs.item(i);
-//                final TreeItem<Node> treeItem = new TreeItem<>(attr);
-//                root.getChildren().add(treeItem);
-//
-//                addChildrenItem(treeItem);
-//            }
-//        }
-//
-//        final NodeList children = node.getChildNodes();
-//        for (int i = 0; i < children.getLength(); i++) {
-//            final Node child = children.item(i);
-//            final TreeItem<Node> treeItem = new TreeItem<>(child);
-//            root.getChildren().add(treeItem);
-//
-//            addChildrenItem(treeItem);
-//        }
-//    }
 //
 //    private static String backColor(short nodeType) {
 //        switch (nodeType) {

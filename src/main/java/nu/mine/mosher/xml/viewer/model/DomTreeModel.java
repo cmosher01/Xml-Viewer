@@ -48,11 +48,15 @@ public class DomTreeModel extends Observable implements TreeModel, Closeable {
             return 0;
         }
 
-        final DomTreeNode nodeParent = (DomTreeNode)parent;
-        return nodeParent.getChildCount();
+        final DomTreeNode n = (DomTreeNode)parent;
+        return n.getChildCount();
     }
 
     public boolean isLeaf(final Object node) {
+        if (node == null) {
+            return true;
+        }
+
         final DomTreeNode n = (DomTreeNode)node;
         return n.isLeaf();
     }
@@ -67,9 +71,9 @@ public class DomTreeModel extends Observable implements TreeModel, Closeable {
         }
 
         final DomTreeNode p = (DomTreeNode)parent;
-        return p.getIndexOfChild((DomTreeNode)child);
+        final DomTreeNode c = (DomTreeNode)child;
+        return p.getIndexOfChild(c);
     }
-
 
     public void addTreeModelListener(final TreeModelListener listener) {
         this.rListener.add(listener);
@@ -78,7 +82,6 @@ public class DomTreeModel extends Observable implements TreeModel, Closeable {
     public void removeTreeModelListener(final TreeModelListener listener) {
         this.rListener.remove(listener);
     }
-
 
     private void setTree(final Optional<DomTreeNode> tree) {
         this.tree = tree;
@@ -96,6 +99,9 @@ public class DomTreeModel extends Observable implements TreeModel, Closeable {
     }
 
     private DomTreeNode[] getRootPath() {
+        if (!this.tree.isPresent()) {
+            return null;
+        }
         return new DomTreeNode[]{getRoot()};
     }
 }
