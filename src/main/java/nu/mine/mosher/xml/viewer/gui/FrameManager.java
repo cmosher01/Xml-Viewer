@@ -4,24 +4,15 @@
 package nu.mine.mosher.xml.viewer.gui;
 
 
-
 import nu.mine.mosher.xml.viewer.XmlViewer;
 import nu.mine.mosher.xml.viewer.model.DomTreeModel;
 
 import javax.swing.*;
-import java.awt.Color;
-import java.awt.Font;
-import java.awt.FontMetrics;
-import java.awt.Graphics;
-import java.awt.Image;
-import java.awt.Rectangle;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
+import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.io.Closeable;
-import java.io.File;
+import java.io.*;
 import java.util.Optional;
-
 
 
 public class FrameManager implements Closeable {

@@ -1,23 +1,18 @@
 package nu.mine.mosher.xml.viewer.model;
 
 
+import org.w3c.dom.*;
 
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
+import java.util.*;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
-
-import static nu.mine.mosher.xml.viewer.Util.filter;
-
+import static nu.mine.mosher.xml.viewer.StringUnicodeEncoderDecoder.filter;
 
 
 /**
  * Wrapper for a DOM Node, to give it a proper interface for use by a JTree.
  */
 public class DomTreeNode {
-    private final Node node;
+    public final Node node;
     private final int cChildren;
     private final Map<DomTreeNode, Integer> childToIndex = new HashMap<>();
     private final Map<Integer, DomTreeNode> indexToChild = new HashMap<>();

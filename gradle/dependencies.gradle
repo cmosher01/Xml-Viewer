@@ -6,7 +6,6 @@ repositories {
 dependencies {
     compile group: 'nu.mine.mosher.gnopt', name: 'Gnopt', version: 'latest.integration'
     compile group: 'nu.mine.mosher.io', name: 'log-files', version: 'latest.integration'
-    compile group: 'org.owasp.encoder', name: 'encoder', version: 'latest.release'
     compile group: 'org.slf4j', name: 'slf4j-api', version: 'latest.integration'
 
     runtime group: 'org.slf4j', name: 'slf4j-simple', version: 'latest.integration'

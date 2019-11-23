@@ -10,8 +10,7 @@ import org.xml.sax.SAXException;
 import javax.swing.event.*;
 import javax.swing.tree.*;
 import javax.xml.parsers.ParserConfigurationException;
-import java.io.Closeable;
-import java.io.IOException;
+import java.io.*;
 import java.net.URL;
 import java.util.*;
 
@@ -19,7 +18,6 @@ import java.util.*;
 public class DomTreeModel extends Observable implements TreeModel, Closeable {
     private Optional<DomTreeNode> tree = Optional.empty();
     private List<TreeModelListener> rListener = new ArrayList<>();
-
 
 
     public void open(final URL xml, final Set<URL> schemata) throws IOException, SAXException, ParserConfigurationException {

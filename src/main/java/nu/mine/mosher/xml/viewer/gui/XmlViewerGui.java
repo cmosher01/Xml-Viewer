@@ -13,9 +13,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
 import java.util.*;
 
-import static java.awt.Font.PLAIN;
-import static java.awt.Font.SANS_SERIF;
-
+import static java.awt.Font.*;
 
 
 public class XmlViewerGui implements Closeable, Observer {
@@ -50,13 +48,10 @@ public class XmlViewerGui implements Closeable, Observer {
         JFrame.setDefaultLookAndFeelDecorated(true);
         JDialog.setDefaultLookAndFeelDecorated(true);
 
-        final Font font = new Font(SANS_SERIF, PLAIN, 10);
+        final Font font = new Font(DIALOG, PLAIN, 10);
         UIManager.put("MenuBar.font", font);
         UIManager.put("Menu.font", font);
         UIManager.put("MenuItem.font", font);
-        UIManager.put("Tree.font", font);
-        UIManager.put("TitledBorder.font", font);
-        UIManager.put("TextArea.font", font);
 
         final JMenuBar menubar = new JMenuBar();
         this.framer.init(menubar, this::close);
@@ -123,9 +118,9 @@ public class XmlViewerGui implements Closeable, Observer {
     private void about() {
         this.framer.showMessage(
             "<html>" +
-            "<p style='font-size:22'>XML Viewer</p><br>" +
-            "Copyright © 2019, Christopher Alan Mosher, Shelton, Connecticut, USA<br>" +
-            "https://github.com/cmosher01" +
-            "</html>");
+                "<p style='font-size:22'>XML Viewer</p><br>" +
+                "Copyright © 2019, Christopher Alan Mosher, Shelton, Connecticut, USA<br>" +
+                "https://github.com/cmosher01" +
+                "</html>");
     }
 }

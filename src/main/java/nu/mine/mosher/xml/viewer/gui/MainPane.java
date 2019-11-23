@@ -1,72 +1,95 @@
-/*
- * Created on Nov 22, 2005
- */
 package nu.mine.mosher.xml.viewer.gui;
 
 
-
-import nu.mine.mosher.xml.viewer.model.DomTreeModel;
-import nu.mine.mosher.xml.viewer.model.DomTreeNode;
+import nu.mine.mosher.xml.viewer.XmlViewer;
+import nu.mine.mosher.xml.viewer.model.*;
 
 import javax.swing.*;
-import javax.swing.event.TreeSelectionEvent;
-import javax.swing.event.TreeSelectionListener;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.util.Optional;
-
+import javax.swing.tree.TreePath;
+import java.awt.*;
+import java.awt.event.*;
+import java.util.*;
 
 
 class MainPane extends JPanel {
     private TreePanel tree;
-    private PropertiesPanel properties;
-    private Optional<DomTreeNode> currentNode;
+    private PropEditPanel properties;
 
     public MainPane(final DomTreeModel model) {
         super(new BorderLayout(), true);
 
         setOpaque(true);
+
+        final int width = width();
+        final int height = height();
+
+        setPreferredSize(new Dimension(width, height));
+
         addNotify();
 
-        this.properties = new PropertiesPanel();
         this.tree = createTreeControl(model);
-
-        final JScrollPane scrlTree = createScrollPane(this.tree);
+        final JScrollPane scrlTree = new JScrollPane(this.tree);
         scrlTree.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrlTree.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-        final JScrollPane scrlProp = createScrollPane(this.properties);
+        this.properties = new PropEditPanel();
+        final JScrollPane scrlProp = new JScrollPane(this.properties);
         scrlProp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrlProp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrlTree, scrlProp);
+        final double ratio = 1.0 / 3.0;
+        splitPane.setResizeWeight(ratio);
+        splitPane.setDividerLocation((int)Math.round(ratio * width));
         add(splitPane);
+
+        addComponentListener(new ComponentAdapter() {
+            @Override
+            public void componentResized(final ComponentEvent e) {
+                super.componentResized(e);
+                width(MainPane.this.getWidth());
+                height(MainPane.this.getHeight());
+            }
+        });
     }
 
-    public void appendViewMenuItems(JMenu menuView) {
+    public void appendViewMenuItems(final JMenu menuView) {
         this.tree.appendViewMenuItems(menuView);
     }
 
     private TreePanel createTreeControl(final DomTreeModel model) {
-        final TreePanel jtree = new TreePanel(model);
-        jtree.init();
-        jtree.addTreeSelectionListener(new TreeSelectionListener()
-        {
-            @Override
-            public void valueChanged(TreeSelectionEvent e)
-            {
-                currentNode = Optional.ofNullable((DomTreeNode)e.getNewLeadSelectionPath().getLastPathComponent());
+        final TreePanel tree = new TreePanel(model);
+        tree.init();
+        tree.addTreeSelectionListener(e -> {
+            try {
+                final TreePath sel = e.getNewLeadSelectionPath();
+                final Optional<DomTreeNode> currentNode;
+                if (Objects.nonNull(sel)) {
+                    currentNode = Optional.ofNullable((DomTreeNode)sel.getLastPathComponent());
+                } else {
+                    currentNode = Optional.empty();
+                }
                 properties.display(currentNode);
+            } catch (final Throwable ex) {
+                throw new IllegalStateException(ex);
             }
         });
-        return jtree;
+        return tree;
     }
 
-    private static JScrollPane createScrollPane(final JComponent c) {
-        final JScrollPane scrollpane = new JScrollPane(c);
+    private static int width() {
+        return Integer.parseInt(XmlViewer.prefs().get("width", "1024"));
+    }
 
-        scrollpane.setPreferredSize(new Dimension(320, 480));
+    private static void width(final int width) {
+        XmlViewer.prefs().put("width", Integer.toString(width, 10));
+    }
 
-        return scrollpane;
+    private static int height() {
+        return Integer.parseInt(XmlViewer.prefs().get("height", "768"));
+    }
+
+    private static void height(final int height) {
+        XmlViewer.prefs().put("height", Integer.toString(height, 10));
     }
 }

@@ -4,24 +4,17 @@
 package nu.mine.mosher.xml.viewer.file;
 
 
-
 import nu.mine.mosher.xml.viewer.gui.FrameManager;
 import nu.mine.mosher.xml.viewer.model.DomTreeModel;
 
-import javax.swing.JMenu;
-import javax.swing.JMenuItem;
-import javax.swing.KeyStroke;
+import javax.swing.*;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.File;
-import java.util.Collections;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.*;
 
 
-
-public class FileManager
-{
+public class FileManager {
     private JMenuItem itemFileOpen;
     private JMenuItem itemFileClose;
 
@@ -55,7 +48,6 @@ public class FileManager
         this.itemFileOpen.setEnabled(true);
         this.itemFileClose.setEnabled(Objects.nonNull(this.model.getRoot()));
     }
-
 
 
     private void fileOpen() {

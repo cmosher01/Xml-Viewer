@@ -1,14 +1,11 @@
 package nu.mine.mosher.xml.viewer.gui;
 
 
-
 import nu.mine.mosher.xml.viewer.model.DomTreeModel;
 
 import javax.swing.*;
-import javax.swing.tree.DefaultTreeCellRenderer;
-import javax.swing.tree.TreeSelectionModel;
-
-import java.awt.Graphics;
+import javax.swing.tree.*;
+import java.awt.Font;
 import java.awt.event.KeyEvent;
 
 import static nu.mine.mosher.xml.viewer.XmlViewer.prefs;
@@ -32,12 +29,6 @@ public class TreePanel extends JTree {
         renderer.setOpenIcon(null);
     }
 
-    @Override
-    protected void paintComponent(final Graphics g) {
-        setFont(getFont().deriveFont(1.0f*visualSize));
-        super.paintComponent(g);
-    }
-
     private static int prefZoom() {
         return prefs().getInt("zoom", 10);
     }
@@ -52,6 +43,7 @@ public class TreePanel extends JTree {
         itemZoomIn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, ACCEL));
         itemZoomIn.addActionListener(e -> zoom(+1));
         menu.add(itemZoomIn);
+
         final JMenuItem itemZoomOut = new JMenuItem("Zoom out");
         itemZoomOut.setMnemonic(KeyEvent.VK_O);
         itemZoomOut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, ACCEL));
@@ -60,12 +52,13 @@ public class TreePanel extends JTree {
     }
 
     private void zoom(final int i) {
-        zoomContrained(4, Math.round(i*(this.visualSize/8.0f+1.0f)), 64);
+        zoomContrained(4, Math.round(i * (this.visualSize / 8.0f + 1.0f)), 64);
+        setFont(new Font(Font.DIALOG, Font.PLAIN, Math.round(1.0f * visualSize)));
         repaint();
     }
 
     private void zoomContrained(final int min, final int delta, final int max) {
-        final int v = this.visualSize+delta;
+        final int v = this.visualSize + delta;
         if (v < min) {
             this.visualSize = min;
         } else if (max < v) {

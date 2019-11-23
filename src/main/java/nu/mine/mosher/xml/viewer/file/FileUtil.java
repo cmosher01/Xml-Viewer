@@ -11,21 +11,21 @@ import java.util.Set;
 
 public class FileUtil {
     public static URL asUrl(final String pathOrUrl) throws IOException {
-        Throwable urlExcept ;
+        Throwable urlExcept;
         try {
             return new URI(pathOrUrl).toURL();
         } catch (final Throwable e) {
             urlExcept = e;
         }
 
-        Throwable pathExcept ;
+        Throwable pathExcept;
         try {
             return Paths.get(pathOrUrl).toUri().toURL();
         } catch (final Throwable e) {
             pathExcept = e;
         }
 
-        final IOException except = new IOException("Invalid path or URL: "+pathOrUrl);
+        final IOException except = new IOException("Invalid path or URL: " + pathOrUrl);
         except.addSuppressed(pathExcept);
         except.addSuppressed(urlExcept);
         throw except;
