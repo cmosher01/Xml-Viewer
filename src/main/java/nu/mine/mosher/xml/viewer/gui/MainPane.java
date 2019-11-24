@@ -13,7 +13,7 @@ import java.util.*;
 
 class MainPane extends JPanel {
     private TreePanel tree;
-    private PropEditPanel properties;
+    private PropertiesPanel properties;
 
     public MainPane(final DomTreeModel model) {
         super(new BorderLayout(), true);
@@ -32,7 +32,7 @@ class MainPane extends JPanel {
         scrlTree.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrlTree.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
-        this.properties = new PropEditPanel();
+        this.properties = new PropertiesPanel();
         final JScrollPane scrlProp = new JScrollPane(this.properties);
         scrlProp.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrlProp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);

@@ -49,6 +49,10 @@ public class FrameManager implements Closeable {
         this.mainPane = new MainPane(this.model);
         this.frame.setContentPane(this.mainPane);
 
+        this.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        this.frame.getGlassPane().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+        this.frame.getLayeredPane().setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));
+
         this.frame.pack();
         this.frame.setLocationRelativeTo(null);
 

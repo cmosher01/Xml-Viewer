@@ -6,6 +6,8 @@ package nu.mine.mosher.xml.viewer.file;
 
 import nu.mine.mosher.xml.viewer.gui.FrameManager;
 import nu.mine.mosher.xml.viewer.model.DomTreeModel;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import java.awt.Toolkit;
@@ -15,6 +17,7 @@ import java.util.*;
 
 
 public class FileManager {
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
     private JMenuItem itemFileOpen;
     private JMenuItem itemFileClose;
 
@@ -53,12 +56,11 @@ public class FileManager {
     private void fileOpen() {
         try {
             this.file = Optional.of(this.framer.getFileToOpen(this.file));
-            // TODO how to handle schema?
-            this.model.open(this.file.get().toURI().toURL(), Collections.emptySet());
+            this.model.open(this.file.get().toURI().toURL());
         } catch (final FrameManager.UserCancelled cancelled) {
             // user pressed the cancel button, so just return
         } catch (final Throwable e) {
-            e.printStackTrace();
+            LOG.error("Error parsing XML file", e);
             this.framer.showMessage(e.toString());
         }
     }

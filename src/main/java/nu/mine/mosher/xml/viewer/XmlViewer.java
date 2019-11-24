@@ -42,14 +42,14 @@ public class XmlViewer {
         final XmlViewerOptions opts = Gnopt.process(XmlViewerOptions.class, args);
 
         if (opts.help) {
-            System.out.println("usage: xml-viewer [input.xml [schema.xsd [...]]]");
+            System.out.println("usage: xml-viewer [input.xml]");
         } else if (opts.dump) {
             if (opts.xml.isPresent()) {
-                final Document dom = FileUtil.asDom(opts.xml.get(), opts.schemata);
+                final Document dom = FileUtil.asDom(opts.xml.get());
                 DomUtil.dump(dom, 0);
             }
         } else {
-            XmlViewerGui.create(opts.xml, opts.schemata);
+            XmlViewerGui.create(opts.xml);
         }
     }
 }

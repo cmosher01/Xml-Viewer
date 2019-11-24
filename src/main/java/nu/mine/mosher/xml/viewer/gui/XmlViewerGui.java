@@ -17,10 +17,10 @@ import static java.awt.Font.*;
 
 
 public class XmlViewerGui implements Closeable, Observer {
-    public static void create(final Optional<URL> xml, final Set<URL> schemata) throws InvocationTargetException, InterruptedException {
+    public static void create(final Optional<URL> xml) throws InvocationTargetException, InterruptedException {
         SwingUtilities.invokeAndWait(() -> {
             try {
-                new XmlViewerGui().run(Objects.requireNonNull(xml), Objects.requireNonNull(schemata));
+                new XmlViewerGui().run(Objects.requireNonNull(xml));
             } catch (Throwable e) {
                 throw new IllegalStateException(e);
             }
@@ -35,9 +35,9 @@ public class XmlViewerGui implements Closeable, Observer {
     }
 
 
-    public void run(final Optional<URL> xml, final Set<URL> schemata) throws ParserConfigurationException, SAXException, IOException, FontFormatException {
+    public void run(final Optional<URL> xml) throws ParserConfigurationException, SAXException, IOException, FontFormatException {
         if (xml.isPresent()) {
-            this.model.open(xml.get(), schemata);
+            this.model.open(xml.get());
         }
         this.model.addObserver(this);
 
@@ -118,9 +118,9 @@ public class XmlViewerGui implements Closeable, Observer {
     private void about() {
         this.framer.showMessage(
             "<html>" +
-                "<p style='font-size:22'>XML Viewer</p><br>" +
-                "Copyright © 2019, Christopher Alan Mosher, Shelton, Connecticut, USA<br>" +
-                "https://github.com/cmosher01" +
-                "</html>");
+            "<p style='font-size:22'>XML Viewer</p><br>" +
+            "Copyright © 2019, Christopher Alan Mosher, Shelton, Connecticut, USA<br>" +
+            "https://github.com/cmosher01" +
+            "</html>");
     }
 }

@@ -20,8 +20,8 @@ public class DomTreeModel extends Observable implements TreeModel, Closeable {
     private List<TreeModelListener> rListener = new ArrayList<>();
 
 
-    public void open(final URL xml, final Set<URL> schemata) throws IOException, SAXException, ParserConfigurationException {
-        setTree(Optional.of(new DomTreeNode(FileUtil.asDom(xml, schemata))));
+    public void open(final URL xml) throws IOException, SAXException, ParserConfigurationException {
+        setTree(Optional.of(new DomTreeNode(FileUtil.asDom(xml))));
     }
 
     public void close() {

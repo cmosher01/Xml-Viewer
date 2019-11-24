@@ -11,7 +11,6 @@ public class XmlViewerOptions {
     public boolean help;
     public boolean dump;
     public Optional<URL> xml = Optional.empty();
-    public final Set<URL> schemata = new HashSet<>();
 
     public void help(Optional<String> value) {
         this.help = true;
@@ -25,12 +24,10 @@ public class XmlViewerOptions {
         if (!value.isPresent()) {
             return;
         }
-        final URL url = asUrl(value.get());
-
-        if (!xml.isPresent()) {
-            this.xml = Optional.of(url);
-        } else {
-            schemata.add(url);
+        if (this.xml.isPresent()) {
+            throw new IllegalArgumentException("only one xml file is allowed");
         }
+        final URL url = asUrl(value.get());
+        this.xml = Optional.of(url);
     }
 }

@@ -9,8 +9,8 @@ import java.util.Optional;
 
 import static nu.mine.mosher.xml.viewer.StringUnicodeEncoderDecoder.filter;
 
-public class PropEditPanel extends JTextArea {
-    public PropEditPanel() {
+public class PropertiesPanel extends JTextArea {
+    public PropertiesPanel() {
         setOpaque(false);
         setEditable(false);
         setLineWrap(true);

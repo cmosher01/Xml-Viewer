@@ -7,7 +7,8 @@ import javax.xml.parsers.*;
 import java.io.IOException;
 import java.net.*;
 import java.nio.file.Paths;
-import java.util.Set;
+
+
 
 public class FileUtil {
     public static URL asUrl(final String pathOrUrl) throws IOException {
@@ -31,20 +32,18 @@ public class FileUtil {
         throw except;
     }
 
-    public static Document asDom(final URL xml, final Set<URL> schemata) throws ParserConfigurationException, IOException, SAXException {
-        final DocumentBuilder builder = documentBuilderFactory(schemata).newDocumentBuilder();
+    public static Document asDom(final URL xml) throws ParserConfigurationException, IOException, SAXException {
+        final DocumentBuilder builder = documentBuilderFactory().newDocumentBuilder();
         builder.setErrorHandler(new MyErrorHandler());
 
         return builder.parse(xml.toExternalForm());
     }
 
-    private static DocumentBuilderFactory documentBuilderFactory(Set<URL> schemata) throws ParserConfigurationException {
-        final boolean schema = (0 < schemata.size());
-
+    private static DocumentBuilderFactory documentBuilderFactory() throws ParserConfigurationException {
         final DocumentBuilderFactory factoryDocBuild = DocumentBuilderFactory.newInstance();
 
         factoryDocBuild.setNamespaceAware(true);
-        factoryDocBuild.setValidating(schema);
+        factoryDocBuild.setValidating(true);
         factoryDocBuild.setExpandEntityReferences(false);
         factoryDocBuild.setCoalescing(false);
         factoryDocBuild.setIgnoringElementContentWhitespace(false);
@@ -56,22 +55,17 @@ public class FileUtil {
         factoryDocBuild.setFeature("http://apache.org/xml/features/xinclude", true);
         factoryDocBuild.setFeature("http://apache.org/xml/features/validate-annotations", true);
         factoryDocBuild.setFeature("http://apache.org/xml/features/validation/schema-full-checking", true);
-        factoryDocBuild.setFeature("http://apache.org/xml/features/validation/schema", schema);
+        factoryDocBuild.setFeature("http://apache.org/xml/features/validation/schema", true);
         factoryDocBuild.setFeature("http://apache.org/xml/features/validation/warn-on-duplicate-attdef", true);
         factoryDocBuild.setFeature("http://apache.org/xml/features/validation/warn-on-undeclared-elemdef", true);
         factoryDocBuild.setFeature("http://apache.org/xml/features/scanner/notify-char-refs", true);
 //        factoryDocBuild.setFeature("http://apache.org/xml/features/scanner/notify-builtin-refs", true); // crashes
         factoryDocBuild.setFeature("http://apache.org/xml/features/dom/defer-node-expansion", false);
 
-        factoryDocBuild.setAttribute(JAXP_SCHEMA_LANGUAGE, W3C_XML_SCHEMA);
-        factoryDocBuild.setAttribute(JAXP_SCHEMA_SOURCE, schemata.stream().map(URL::toExternalForm).toArray());
+        factoryDocBuild.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaLanguage", "http://www.w3.org/2001/XMLSchema");
 
         return factoryDocBuild;
     }
-
-    private static final String JAXP_SCHEMA_LANGUAGE = "http://java.sun.com/xml/jaxp/properties/schemaLanguage";
-    private static final String JAXP_SCHEMA_SOURCE = "http://java.sun.com/xml/jaxp/properties/schemaSource";
-    private static final String W3C_XML_SCHEMA = "http://www.w3.org/2001/XMLSchema";
 
     private static class MyErrorHandler implements ErrorHandler {
         public void warning(SAXParseException spe) throws SAXException {

@@ -40,7 +40,14 @@ public class DomUtil {
         prpdefs.add(new NodeProp("node name", Node.class, Node::getNodeName));
         prpdefs.add(new NodeProp("base URI", Node.class, Node::getBaseURI));
         prpdefs.add(new NodeProp("data type", Element.class, node -> ((Element)node).getSchemaTypeInfo().getTypeNamespace() + ":" + ((Element)node).getSchemaTypeInfo().getTypeName()));
+        prpdefs.add(new NodeProp("data type", Attr.class, node -> ((Attr)node).getSchemaTypeInfo().getTypeNamespace() + ":" + ((Attr)node).getSchemaTypeInfo().getTypeName()));
         prpdefs.add(new NodeProp("node value", Node.class, Node::getNodeValue));
+
+        prpdefs.add(new NodeProp("spec'd?", Attr.class, node -> Boolean.toString(((Attr)node).getSpecified())));
+        prpdefs.add(new NodeProp("ID?", Attr.class, node -> Boolean.toString(((Attr)node).isId())));
+
+        prpdefs.add(new NodeProp("len", CharacterData.class, node -> Integer.toString(((CharacterData)node).getLength())));
+        prpdefs.add(new NodeProp("white?", Text.class, node -> Boolean.toString(((Text)node).isElementContentWhitespace())));
     }
 
     public static class NodeInfo {
