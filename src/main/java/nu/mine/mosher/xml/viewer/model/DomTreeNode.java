@@ -1,11 +1,13 @@
 package nu.mine.mosher.xml.viewer.model;
 
 
+import nu.mine.mosher.xml.viewer.file.DomUtil;
 import org.w3c.dom.*;
 
 import java.util.*;
 
 import static nu.mine.mosher.xml.viewer.StringUnicodeEncoderDecoder.filter;
+import static org.w3c.dom.Node.*;
 
 
 /**
@@ -26,6 +28,26 @@ public class DomTreeNode {
             final NamedNodeMap attrs = this.node.getAttributes();
             for (int a = 0; a < attrs.getLength(); ++a) {
                 final Node attr = attrs.item(a);
+                DomTreeNode child = new DomTreeNode(attr);
+                this.indexToChild.put(indexOfNewChild, child);
+                this.childToIndex.put(child, indexOfNewChild);
+                ++indexOfNewChild;
+            }
+        }
+
+        if (this.node.getNodeType() == DOCUMENT_TYPE_NODE) {
+            final DocumentType doctype = (DocumentType)this.node;
+            final NamedNodeMap entities = doctype.getEntities();
+            for (int a = 0; a < entities.getLength(); ++a) {
+                final Node attr = entities.item(a);
+                DomTreeNode child = new DomTreeNode(attr);
+                this.indexToChild.put(indexOfNewChild, child);
+                this.childToIndex.put(child, indexOfNewChild);
+                ++indexOfNewChild;
+            }
+            final NamedNodeMap notes = doctype.getNotations();
+            for (int a = 0; a < notes.getLength(); ++a) {
+                final Node attr = notes.item(a);
                 DomTreeNode child = new DomTreeNode(attr);
                 this.indexToChild.put(indexOfNewChild, child);
                 this.childToIndex.put(child, indexOfNewChild);
@@ -61,6 +83,35 @@ public class DomTreeNode {
 
     @Override
     public String toString() {
-        return filter(this.node.toString());
+        final StringBuilder sb = new StringBuilder();
+
+        String t = DomUtil.nameFromTypeId(this.node.getNodeType()).substring(0,1).toUpperCase();
+        if (this.node.getNodeType() == TEXT_NODE) {
+            final Text n = (Text)this.node;
+            if (n.isElementContentWhitespace()) {
+                t = "W";
+            }
+        }
+        sb.append(t);
+
+        sb.append(" ");
+        sb.append(this.node.getNodeName());
+
+        String val = this.node.getNodeValue();
+        if (Objects.nonNull(val)) {
+            val = val.trim();
+            if (!val.isEmpty()) {
+                sb.append(" (");
+                if (val.length() < 32) {
+                    sb.append(val);
+                } else {
+                    sb.append(val, 0, 32);
+                    sb.append("\u2026");
+                }
+                sb.append(")");
+            }
+        }
+
+        return sb.toString();
     }
 }

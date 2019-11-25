@@ -1,0 +1,48 @@
+<?xml version="1.1" encoding="UTF-8" standalone="no"?>
+
+ <!DOCTYPE abc:a [
+    <!ELEMENT a (#PCDATA)>
+    <!ENTITY bw "Béowulf">
+    <!ENTITY logo SYSTEM "http://www.xmlwriter.net/logo.gif" NDATA gif>
+    <!NOTATION gif PUBLIC "gif viewer">
+]>
+
+
+<abc:a
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="https://mosher.mine.nu/xmlns/example/abc abc.xsd"
+    xmlns:abc="https://mosher.mine.nu/xmlns/example/abc"
+    abc:xyz="foobar"
+>
+    <!-- example XML file with many features -->
+    <abc:b abc:abc="  test — ing  &quot; &amp;           \ &apos; &lt; &gt;   ">
+        <?note   maybe I have a "note"      processing instruction in my xml      ?>
+        <abc:c>
+            The first few lines of Beowulf.
+
+            <![CDATA[Hwæt! Wé Gárdena      in géardagum
+            þéodcyninga      þrym gefrúnon·
+            hú ðá æþelingas      ellen fremedon.
+            Oft Scyld Scéfing      sceaþena þréatum
+            monegum maégþum      meodosetla oftéah·
+            egsode Eorle      syððan aérest wearð
+            féasceaft funden      hé þæs frófre gebád·
+            wéox under wolcnum·      weorðmyndum þáh
+            oð þæt him aéghwylc      þára ymbsittendra
+            ofer hronráde      hýran scolde,
+            gomban gyldan·      þæt wæs gód cyning.
+            Ðaém eafera wæs      æfter cenned
+            geong in geardum      þone god sende
+            folce tó frófre·      fyrenðearfe ongeat·
+            þæt híe aér drugon      aldorléase
+            lange hwíle·      him þæs líffréä
+            wuldres wealdend      woroldáre forgeaf:
+            &bw; wæs bréme      —blaéd wíde sprang—
+            Scyldes eafera      Scedelandum in.]]>
+        </abc:c>
+    </abc:b>
+</abc:a>
+
+
+
+

@@ -1,0 +1,29 @@
+<?xml version="1.1" encoding="UTF-8"?>
+<xs:schema
+    version="1.1"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema"
+    xmlns:abc="https://mosher.mine.nu/xmlns/example/abc"
+    targetNamespace="https://mosher.mine.nu/xmlns/example/abc"
+    elementFormDefault="qualified"
+    attributeFormDefault="qualified"
+>
+    <xs:element name="a">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="abc:b" />
+            </xs:sequence>
+            <xs:attribute name="xyz" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="b">
+        <xs:complexType>
+            <xs:sequence>
+                <xs:element ref="abc:c" />
+            </xs:sequence>
+            <xs:attribute name="abc" type="xs:string"/>
+        </xs:complexType>
+    </xs:element>
+
+    <xs:element name="c" type="xs:string"/>
+</xs:schema>

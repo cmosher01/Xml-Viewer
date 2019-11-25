@@ -27,8 +27,13 @@ public class StringUnicodeEncoderDecoder {
     private final static String UPPER_CASE_UNICODE_PREFIX_REGEX = "\\\\U";
     private final static String DELIMITER = "\\\\u";
 
+    // strip trailing newline
     public static String filter(final String s) { // short name
-        return StringUnicodeEncoderDecoder.encodeStringToUnicodeSequence(s);
+        String r = StringUnicodeEncoderDecoder.encodeStringToUnicodeSequence(s);
+        if (r.endsWith("\n")) {
+            r = r.substring(0, r.length()-1);
+        }
+        return r;
     }
 
     /**
