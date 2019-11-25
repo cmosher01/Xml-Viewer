@@ -12,7 +12,7 @@
     xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xsi:schemaLocation="https://mosher.mine.nu/xmlns/example/abc abc.xsd"
     xmlns:abc="https://mosher.mine.nu/xmlns/example/abc"
-    abc:xyz="foobar"
+    abc:xyz="foobar&#178;"
 >
     <!-- example XML file with many features -->
     <abc:b abc:abc="  test — ing  &quot; &amp;           \ &apos; &lt; &gt;   ">
