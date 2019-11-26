@@ -2,11 +2,19 @@ package nu.mine.mosher.xml.viewer.gui;
 
 
 import nu.mine.mosher.xml.viewer.model.DomTreeModel;
+import nu.mine.mosher.xml.viewer.model.DomTreeNode;
 
 import javax.swing.*;
+import javax.swing.plaf.TreeUI;
 import javax.swing.tree.*;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Enumeration;
+import java.util.List;
+import java.util.Objects;
 
 import static nu.mine.mosher.xml.viewer.XmlViewer.prefs;
 import static nu.mine.mosher.xml.viewer.gui.XmlViewerGui.ACCEL;
@@ -49,6 +57,18 @@ public class TreePanel extends JTree {
         itemZoomOut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, ACCEL));
         itemZoomOut.addActionListener(e -> zoom(-1));
         menu.add(itemZoomOut);
+
+        menu.addSeparator();
+
+        final JMenuItem itemExpandAll = new JMenuItem("Expand all");
+        itemExpandAll.setMnemonic(KeyEvent.VK_X);
+        itemExpandAll.addActionListener(e -> expandAll());
+        menu.add(itemExpandAll);
+
+        final JMenuItem itemCollapseAll = new JMenuItem("Collapse all");
+        itemCollapseAll.setMnemonic(KeyEvent.VK_C);
+        itemCollapseAll.addActionListener(e -> collapseAll());
+        menu.add(itemCollapseAll);
     }
 
     private void zoom(final int i) {
@@ -67,5 +87,72 @@ public class TreePanel extends JTree {
             this.visualSize = v;
         }
         prefZoom(this.visualSize);
+    }
+
+    private void expandAll() {
+        expandAll(this, true);
+    }
+
+    private void collapseAll() {
+        expandAll(this, false);
+    }
+
+    private static void expandAll(final JTree tree, final boolean expand) {
+        final Object root = tree.getModel().getRoot();
+        if (Objects.nonNull(root)) {
+            final TreeUI treeUI = tree.getUI();
+            try {
+                tree.setUI(null);
+                expandAll(tree, new TreePath(root), expand);
+            } finally {
+                tree.setUI(treeUI);
+            }
+        }
+    }
+
+    private static boolean expandAll(final JTree tree, final TreePath parent, final boolean expand) {
+        boolean childExpandCalled = false;
+
+        final DomTreeNode node = (DomTreeNode)parent.getLastPathComponent();
+        for (int i = 0; i < node.getChildCount(); ++i) {
+            final DomTreeNode child = node.getChild(i);
+            final TreePath path = parent.pathByAddingChild(child);
+            childExpandCalled = expandAll(tree, path, expand) || childExpandCalled;
+        }
+
+        if (!childExpandCalled) {
+            if (expand) {
+                tree.expandPath(parent);
+            } else {
+                tree.collapsePath(parent);
+            }
+        }
+
+        return childExpandCalled;
+    }
+
+    @Override
+    public Enumeration<TreePath> getExpandedDescendants(final TreePath parent) {
+        if (!isExpanded(parent)) {
+            return null;
+        }
+        final ArrayList<TreePath> list = new ArrayList<>(4096);
+        getOpenedChild(parent, list);
+        return Collections.enumeration(list);
+    }
+
+    private void getOpenedChild(final TreePath paramTreeNode, final Collection<TreePath> list)
+    {
+        final Object parent = paramTreeNode.getLastPathComponent();
+        final TreeModel model = getModel();
+        final int n = model.getChildCount(parent);
+        for (int i = 0; i < n; ++i) {
+            final Object child = model.getChild(parent, i);
+            final TreePath childPath = paramTreeNode.pathByAddingChild(child);
+            if (!model.isLeaf(child) && isExpanded(childPath)) {
+                list.add(childPath);
+                getOpenedChild(childPath, list);
+            }
+        }
     }
 }
