@@ -105,7 +105,8 @@ public class DomTreeNode {
             sb.append("orange");
         } else if (this.node.getNodeType() == ATTRIBUTE_NODE) {
             final Attr attr = (Attr)this.node;
-            if (attr.getNamespaceURI().equals("http://www.w3.org/2000/xmlns/")) {
+            final String ns = attr.getNamespaceURI();
+            if (Objects.nonNull(ns) && ns.equals("http://www.w3.org/2000/xmlns/")) {
                 sb.append("gray");
             } else {
                 sb.append("blue");

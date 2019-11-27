@@ -1,30 +1,39 @@
 package nu.mine.mosher.xml.viewer.gui;
 
+
+
 import nu.mine.mosher.xml.viewer.file.FileManager;
 import nu.mine.mosher.xml.viewer.model.DomTreeModel;
-import org.xml.sax.SAXException;
 
 import javax.swing.*;
-import javax.xml.parsers.ParserConfigurationException;
-import java.awt.*;
+import java.awt.Font;
+import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
-import java.io.*;
+import java.io.Closeable;
 import java.lang.reflect.InvocationTargetException;
-import java.net.URL;
-import java.util.*;
+import java.util.Observable;
+import java.util.Observer;
 
-import static java.awt.Font.*;
+import static java.awt.Font.DIALOG;
+import static java.awt.Font.PLAIN;
 
 
 public class XmlViewerGui implements Closeable, Observer {
-    public static void create(final Optional<URL> xml) throws InvocationTargetException, InterruptedException {
+    private static XmlViewerGui INSTANCE;
+
+    public static void create() throws InvocationTargetException, InterruptedException {
         SwingUtilities.invokeAndWait(() -> {
             try {
-                new XmlViewerGui().run(Objects.requireNonNull(xml));
+                INSTANCE = new XmlViewerGui();
+                INSTANCE.run();
             } catch (Throwable e) {
                 throw new IllegalStateException(e);
             }
         });
+    }
+
+    public static void showMessage(final String message) {
+        INSTANCE.framer.showMessage(message);
     }
 
     private final DomTreeModel model = new DomTreeModel();
@@ -35,10 +44,7 @@ public class XmlViewerGui implements Closeable, Observer {
     }
 
 
-    public void run(final Optional<URL> xml) throws ParserConfigurationException, SAXException, IOException, FontFormatException {
-        if (xml.isPresent()) {
-            this.model.open(xml.get());
-        }
+    public void run() {
         this.model.addObserver(this);
 
         setLookAndFeel();
@@ -63,7 +69,6 @@ public class XmlViewerGui implements Closeable, Observer {
 
     public void update(final Observable observable, final Object unused) {
         this.filer.updateMenu();
-//        this.framer.repaint();
     }
 
     public void setLookAndFeel() {
@@ -116,7 +121,7 @@ public class XmlViewerGui implements Closeable, Observer {
     }
 
     private void about() {
-        this.framer.showMessage(
+        showMessage(
             "<html>" +
             "<p style='font-size:22'>XML Viewer</p><br>" +
             "Copyright © 2019, Christopher Alan Mosher, Shelton, Connecticut, USA<br>" +

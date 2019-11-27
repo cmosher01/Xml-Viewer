@@ -9,12 +9,7 @@ import javax.swing.plaf.TreeUI;
 import javax.swing.tree.*;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Enumeration;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 import static nu.mine.mosher.xml.viewer.XmlViewer.prefs;
 import static nu.mine.mosher.xml.viewer.gui.XmlViewerGui.ACCEL;
@@ -28,6 +23,7 @@ public class TreePanel extends JTree {
     }
 
     public void init() {
+        setFont(new Font(Font.DIALOG, Font.PLAIN, Math.round(1.0f * visualSize)));
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         setShowsRootHandles(true);
         setRootVisible(true);

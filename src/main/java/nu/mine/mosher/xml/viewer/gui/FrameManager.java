@@ -113,6 +113,11 @@ public class FrameManager implements Closeable {
         return bufferedImage;
     }
 
+    public JFrame frame()
+    {
+        return this.frame;
+    }
+
     public static class UserCancelled extends Exception {
         private UserCancelled() {
         }
