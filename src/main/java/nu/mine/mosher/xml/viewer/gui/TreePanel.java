@@ -1,8 +1,7 @@
 package nu.mine.mosher.xml.viewer.gui;
 
 
-import nu.mine.mosher.xml.viewer.model.DomTreeModel;
-import nu.mine.mosher.xml.viewer.model.DomTreeNode;
+import nu.mine.mosher.xml.viewer.model.*;
 
 import javax.swing.*;
 import javax.swing.plaf.TreeUI;
@@ -17,13 +16,17 @@ import static nu.mine.mosher.xml.viewer.gui.XmlViewerGui.ACCEL;
 
 public class TreePanel extends JTree {
     private int visualSize = prefZoom();
+    private JMenuItem itemZoomIn;
+    private JMenuItem itemZoomOut;
+    private JMenuItem itemExpandAll;
+    private JMenuItem itemCollapseAll;
 
-    public TreePanel(DomTreeModel model) {
+    public TreePanel(final DomTreeModel model) {
         super(model);
     }
 
     public void init() {
-        setFont(new Font(Font.DIALOG, Font.PLAIN, Math.round(1.0f * visualSize)));
+        updateFont();
         getSelectionModel().setSelectionMode(TreeSelectionModel.SINGLE_TREE_SELECTION);
         setShowsRootHandles(true);
         setRootVisible(true);
@@ -41,14 +44,21 @@ public class TreePanel extends JTree {
         prefs().putInt("zoom", zoom);
     }
 
+    public void updateMenu(final boolean haveTree) {
+        itemZoomIn.setEnabled(haveTree);
+        itemZoomOut.setEnabled(haveTree);
+        itemExpandAll.setEnabled(haveTree);
+        itemCollapseAll.setEnabled(haveTree);
+    }
+
     public void appendViewMenuItems(final JMenu menu) {
-        final JMenuItem itemZoomIn = new JMenuItem("Zoom in");
+        itemZoomIn = new JMenuItem("Zoom in");
         itemZoomIn.setMnemonic(KeyEvent.VK_I);
         itemZoomIn.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_EQUALS, ACCEL));
         itemZoomIn.addActionListener(e -> zoom(+1));
         menu.add(itemZoomIn);
 
-        final JMenuItem itemZoomOut = new JMenuItem("Zoom out");
+        itemZoomOut = new JMenuItem("Zoom out");
         itemZoomOut.setMnemonic(KeyEvent.VK_O);
         itemZoomOut.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_MINUS, ACCEL));
         itemZoomOut.addActionListener(e -> zoom(-1));
@@ -56,20 +66,24 @@ public class TreePanel extends JTree {
 
         menu.addSeparator();
 
-        final JMenuItem itemExpandAll = new JMenuItem("Expand all");
+        itemExpandAll = new JMenuItem("Expand all");
         itemExpandAll.setMnemonic(KeyEvent.VK_X);
         itemExpandAll.addActionListener(e -> expandAll());
         menu.add(itemExpandAll);
 
-        final JMenuItem itemCollapseAll = new JMenuItem("Collapse all");
+        itemCollapseAll = new JMenuItem("Collapse all");
         itemCollapseAll.setMnemonic(KeyEvent.VK_C);
         itemCollapseAll.addActionListener(e -> collapseAll());
         menu.add(itemCollapseAll);
     }
 
+    private void updateFont() {
+        setFont(new Font(Font.DIALOG, Font.PLAIN, Math.round(1.0f * visualSize)));
+    }
+
     private void zoom(final int i) {
         zoomContrained(4, Math.round(i * (this.visualSize / 8.0f + 1.0f)), 64);
-        setFont(new Font(Font.DIALOG, Font.PLAIN, Math.round(1.0f * visualSize)));
+        updateFont();
         repaint();
     }
 
@@ -93,7 +107,7 @@ public class TreePanel extends JTree {
         expandAll(this, false);
     }
 
-    private static void expandAll(final JTree tree, final boolean expand) {
+    private void expandAll(final JTree tree, final boolean expand) {
         final Object root = tree.getModel().getRoot();
         if (Objects.nonNull(root)) {
             final TreeUI treeUI = tree.getUI();
@@ -110,9 +124,9 @@ public class TreePanel extends JTree {
         boolean childExpandCalled = false;
 
         final DomTreeNode node = (DomTreeNode)parent.getLastPathComponent();
-        for (int i = 0; i < node.getChildCount(); ++i) {
-            final DomTreeNode child = node.getChild(i);
-            final TreePath path = parent.pathByAddingChild(child);
+        final int n = node.getChildCount();
+        for (int i = 0; i < n; ++i) {
+            final TreePath path = parent.pathByAddingChild(node.getChild(i));
             childExpandCalled = expandAll(tree, path, expand) || childExpandCalled;
         }
 
@@ -128,26 +142,25 @@ public class TreePanel extends JTree {
     }
 
     @Override
-    public Enumeration<TreePath> getExpandedDescendants(final TreePath parent) {
-        if (!isExpanded(parent)) {
+    public Enumeration<TreePath> getExpandedDescendants(final TreePath path) {
+        if (!isExpanded(path)) {
             return null;
         }
-        final ArrayList<TreePath> list = new ArrayList<>(4096);
-        getOpenedChild(parent, list);
-        return Collections.enumeration(list);
+        final ArrayList<TreePath> paths = new ArrayList<>(4096);
+        getOpenedChild(path, paths);
+        return Collections.enumeration(paths);
     }
 
-    private void getOpenedChild(final TreePath paramTreeNode, final Collection<TreePath> list)
-    {
-        final Object parent = paramTreeNode.getLastPathComponent();
+    private void getOpenedChild(final TreePath path, final Collection<TreePath> paths) {
+        final Object parent = path.getLastPathComponent();
         final TreeModel model = getModel();
         final int n = model.getChildCount(parent);
         for (int i = 0; i < n; ++i) {
             final Object child = model.getChild(parent, i);
-            final TreePath childPath = paramTreeNode.pathByAddingChild(child);
+            final TreePath childPath = path.pathByAddingChild(child);
             if (!model.isLeaf(child) && isExpanded(childPath)) {
-                list.add(childPath);
-                getOpenedChild(childPath, list);
+                paths.add(childPath);
+                getOpenedChild(childPath, paths);
             }
         }
     }

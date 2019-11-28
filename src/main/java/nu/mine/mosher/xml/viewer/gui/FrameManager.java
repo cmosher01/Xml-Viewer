@@ -1,6 +1,3 @@
-/*
- * Created on Nov 22, 2005
- */
 package nu.mine.mosher.xml.viewer.gui;
 
 
@@ -12,11 +9,10 @@ import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
-import java.util.Optional;
+import java.util.*;
 
 
 public class FrameManager implements Closeable {
-
     private final DomTreeModel model;
     private JFrame frame;
     private MainPane mainPane;
@@ -59,6 +55,10 @@ public class FrameManager implements Closeable {
         this.frame.setVisible(true);
     }
 
+    public void updateMenu() {
+        this.mainPane.updateMenu(Objects.nonNull(this.model.getRoot()));
+    }
+
     public void appendViewMenuItems(JMenu menuView) {
         this.mainPane.appendViewMenuItems(menuView);
     }
@@ -71,8 +71,8 @@ public class FrameManager implements Closeable {
         XmlViewer.prefs().put("dir", dir.getAbsolutePath());
     }
 
-    public File getFileToOpen(final Optional<File> initial) throws UserCancelled {
-        final JFileChooser chooser = new JFileChooser(initial.orElse(dir()));
+    public File getFileToOpen() throws UserCancelled {
+        final JFileChooser chooser = new JFileChooser(dir());
         final int actionType = chooser.showOpenDialog(this.frame);
         if (actionType != JFileChooser.APPROVE_OPTION) {
             throw new UserCancelled();

@@ -1,5 +1,6 @@
 package nu.mine.mosher.xml.viewer.file;
 
+import org.w3c.dom.CharacterData;
 import org.w3c.dom.*;
 
 import java.util.*;

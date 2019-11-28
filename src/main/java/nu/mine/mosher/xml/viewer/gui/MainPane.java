@@ -53,6 +53,10 @@ class MainPane extends JPanel {
         });
     }
 
+    public void updateMenu(final boolean haveTree) {
+        this.tree.updateMenu(haveTree);
+    }
+
     public void appendViewMenuItems(final JMenu menuView) {
         this.tree.appendViewMenuItems(menuView);
     }

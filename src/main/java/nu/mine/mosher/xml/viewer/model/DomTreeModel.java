@@ -4,14 +4,11 @@
 package nu.mine.mosher.xml.viewer.model;
 
 
-import nu.mine.mosher.xml.viewer.file.FileUtil;
-import org.xml.sax.SAXException;
+import org.w3c.dom.Document;
 
 import javax.swing.event.*;
 import javax.swing.tree.*;
-import javax.xml.parsers.ParserConfigurationException;
 import java.io.*;
-import java.net.URL;
 import java.util.*;
 
 
@@ -20,8 +17,8 @@ public class DomTreeModel extends Observable implements TreeModel, Closeable {
     private List<TreeModelListener> rListener = new ArrayList<>();
 
 
-    public void open(final URL xml) throws IOException, SAXException, ParserConfigurationException {
-        setTree(Optional.of(new DomTreeNode(FileUtil.asDom(xml))));
+    public void open(final Document document) {
+        setTree(Optional.of(new DomTreeNode(document)));
     }
 
     public void close() {

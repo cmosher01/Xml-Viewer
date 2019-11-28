@@ -1,21 +1,17 @@
 package nu.mine.mosher.xml.viewer.gui;
 
 
-
 import nu.mine.mosher.xml.viewer.file.FileManager;
 import nu.mine.mosher.xml.viewer.model.DomTreeModel;
 
 import javax.swing.*;
-import java.awt.Font;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.Closeable;
 import java.lang.reflect.InvocationTargetException;
-import java.util.Observable;
-import java.util.Observer;
+import java.util.*;
 
-import static java.awt.Font.DIALOG;
-import static java.awt.Font.PLAIN;
+import static java.awt.Font.*;
 
 
 public class XmlViewerGui implements Closeable, Observer {
@@ -68,6 +64,7 @@ public class XmlViewerGui implements Closeable, Observer {
 
 
     public void update(final Observable observable, final Object unused) {
+        this.framer.updateMenu();
         this.filer.updateMenu();
     }
 

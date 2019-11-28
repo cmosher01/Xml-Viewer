@@ -1,30 +1,15 @@
 package nu.mine.mosher.xml.viewer.file;
 
-import nu.mine.mosher.xml.viewer.gui.XmlViewerGui;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.xml.sax.*;
 
 import javax.xml.parsers.*;
 import java.io.IOException;
-import java.net.*;
+import java.net.URL;
 
 
 
 public class FileUtil {
-    private static final Logger LOG = LoggerFactory.getLogger(FileUtil.class);
-
-    public static Document asDom(final URL xml) throws ParserConfigurationException, IOException, SAXException {
-        try {
-            return asDom(xml, true);
-        } catch (final Exception e) {
-            LOG.warn("XML validation failed for {}", xml, e);
-//            XmlViewerGui.showMessage("Warning: XML validation failed. Will try to open without validation...");
-        }
-        return asDom(xml, false);
-    }
-
     public static Document asDom(final URL xml, final boolean validate) throws ParserConfigurationException, IOException, SAXException {
         final DocumentBuilder builder = documentBuilderFactory(validate).newDocumentBuilder();
         builder.setErrorHandler(new MyErrorHandler());

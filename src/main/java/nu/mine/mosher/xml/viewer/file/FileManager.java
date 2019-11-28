@@ -1,40 +1,26 @@
-/*
- * Created on Nov 22, 2005
- */
 package nu.mine.mosher.xml.viewer.file;
 
 
 import nu.mine.mosher.xml.viewer.gui.FrameManager;
 import nu.mine.mosher.xml.viewer.model.DomTreeModel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
+import org.w3c.dom.Document;
 
 import javax.swing.*;
-import java.awt.BorderLayout;
-import java.awt.Dimension;
-import java.awt.Toolkit;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.io.File;
 import java.net.URL;
-import java.util.*;
+import java.util.Objects;
+
+import static nu.mine.mosher.xml.viewer.gui.XmlViewerGui.ACCEL;
 
 
 public class FileManager {
-    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
-    private JMenuItem itemFileOpen;
-    private JMenuItem itemFileClose;
-
-    private final DomTreeModel model;
-    private final FrameManager framer;
-
-    private Optional<File> file = Optional.empty();
-
     public FileManager(final DomTreeModel model, final FrameManager framer) {
         this.model = model;
         this.framer = framer;
     }
-
-    private static final int ACCEL = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
     public void appendMenuItems(final JMenu appendTo) {
         this.itemFileOpen = new JMenuItem("Open\u2026");
@@ -56,13 +42,67 @@ public class FileManager {
     }
 
 
+
+    private class FileOpenTask extends SwingWorker<Void, Void> {
+        private final URL opened;
+        private JDialog dialog;
+        private Document document;
+
+        public FileOpenTask(final URL o) {
+            this.opened = o;
+        }
+
+        @Override
+        protected Void doInBackground() {
+            try {
+                try {
+                    this.document = FileUtil.asDom(opened, true);
+                } catch (final Exception e) {
+                    LOG.warn("XML validation failed for {}", opened, e);
+//            XmlViewerGui.showMessage("Warning: XML validation failed. Will try to open without validation...");
+                }
+                this.document = FileUtil.asDom(opened, false);
+            } catch (final Throwable e) {
+                LOG.error("Error parsing XML file", e);
+                FileManager.this.framer.showMessage(e.toString());
+            }
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            if (Objects.nonNull(this.document)) {
+                FileManager.this.model.open(this.document);
+            }
+
+            super.done();
+            this.dialog.setVisible(false);
+            this.dialog.dispose();
+        }
+
+        public void setCanceller(final JDialog dialog) {
+            this.dialog = dialog;
+        }
+    }
+
+
+
+    private final Logger LOG = LoggerFactory.getLogger(this.getClass());
+
+    private final FrameManager framer;
+    private final DomTreeModel model;
+
+    private JMenuItem itemFileClose;
+    private JMenuItem itemFileOpen;
+
+
+
     private void fileOpen() {
         try {
-            final File opened = this.framer.getFileToOpen(this.file);
+            final File opened = this.framer.getFileToOpen();
             final FileOpenTask task = new FileOpenTask(opened.toURI().toURL());
-            create(task, this.framer.frame());
+            canceller(task, this.framer.frame());
             task.execute();
-            this.file = Optional.of(opened);
         } catch (final FrameManager.UserCancelled cancelled) {
             // user pressed the cancel button, so just return
         } catch (final Throwable e) {
@@ -75,80 +115,31 @@ public class FileManager {
         this.model.close();
     }
 
-        public void create(final FileOpenTask task, JFrame frame) {
-            final JDialog dialog = new JDialog(frame, "Wait");
-            JLabel label = new JLabel("This could take awhile. Please wait...");
-            label.setHorizontalAlignment(JLabel.CENTER);
+    private void canceller(final FileOpenTask task, final JFrame frame) {
+        final JDialog dialog = new JDialog(frame, "Wait");
+        final JLabel label = new JLabel("Parsing XML. This could take a while. Please wait...");
+        label.setHorizontalAlignment(JLabel.CENTER);
 
-            JButton closeButton = new JButton("Cancel");
-            closeButton.addActionListener(e -> {
-                System.err.println("clicked cancel");
-                System.err.flush();
+        final JButton closeButton = new JButton("Cancel");
+        closeButton.addActionListener(e -> {
+            task.cancel(true);
+        });
+        final JPanel closePanel = new JPanel();
+        closePanel.setLayout(new BoxLayout(closePanel, BoxLayout.LINE_AXIS));
+        closePanel.add(Box.createHorizontalGlue());
+        closePanel.add(closeButton);
+        closePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 5));
 
-                task.cancel(true);
-            });
-            JPanel closePanel = new JPanel();
-            closePanel.setLayout(new BoxLayout(closePanel, BoxLayout.LINE_AXIS));
-            closePanel.add(Box.createHorizontalGlue());
-            closePanel.add(closeButton);
-            closePanel.setBorder(BorderFactory.createEmptyBorder(0,0,5,5));
+        final JPanel contentPane = new JPanel(new BorderLayout());
+        contentPane.add(label, BorderLayout.CENTER);
+        contentPane.add(closePanel, BorderLayout.PAGE_END);
+        contentPane.setOpaque(true);
+        dialog.setContentPane(contentPane);
 
-            JPanel contentPane = new JPanel(new BorderLayout());
-            contentPane.add(label, BorderLayout.CENTER);
-            contentPane.add(closePanel, BorderLayout.PAGE_END);
-            contentPane.setOpaque(true);
-            dialog.setContentPane(contentPane);
+        dialog.setSize(new Dimension(300, 150));
+        dialog.setLocationRelativeTo(frame);
+        dialog.setVisible(true);
 
-            dialog.setSize(new Dimension(300, 150));
-            dialog.setLocationRelativeTo(frame);
-            dialog.setVisible(true);
-
-            task.setCanceller(dialog);
-    }
-
-
-    private class FileOpenTask extends SwingWorker<Void, Void> {
-        private final URL opened;
-        private JDialog dialog;
-
-        public FileOpenTask(URL opened) {
-            this.opened = opened;
-        }
-
-        @Override
-        protected Void doInBackground() {
-            try {
-                tryRun();
-            } catch (final Throwable e) {
-                e.printStackTrace();
-                Thread.currentThread().interrupt();
-            }
-            return null;
-        }
-
-        private void tryRun() {
-            try {
-                FileManager.this.model.open(opened);
-            } catch (final Throwable e) {
-                e.printStackTrace();
-                LOG.error("Error parsing XML file", e);
-                framer.showMessage(e.toString());
-            }
-        }
-
-        @Override
-        protected void done() {
-            super.done();
-            System.err.println("done");
-            System.err.flush();
-            dialog.setVisible(false);
-            this.dialog.dispose();
-            // if success:
-//            FileManager.this.file = Optional.of(original file);
-        }
-
-        public void setCanceller(JDialog dialog) {
-            this.dialog = dialog;
-        }
+        task.setCanceller(dialog);
     }
 }

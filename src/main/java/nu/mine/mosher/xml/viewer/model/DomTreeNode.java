@@ -4,6 +4,7 @@ package nu.mine.mosher.xml.viewer.model;
 import nu.mine.mosher.xml.viewer.file.DomUtil;
 import org.w3c.dom.*;
 
+import javax.xml.XMLConstants;
 import java.util.*;
 
 import static nu.mine.mosher.xml.viewer.StringUnicodeEncoderDecoder.filter;
@@ -106,7 +107,7 @@ public class DomTreeNode {
         } else if (this.node.getNodeType() == ATTRIBUTE_NODE) {
             final Attr attr = (Attr)this.node;
             final String ns = attr.getNamespaceURI();
-            if (Objects.nonNull(ns) && ns.equals("http://www.w3.org/2000/xmlns/")) {
+            if (Objects.nonNull(ns) && ns.equals(XMLConstants.XMLNS_ATTRIBUTE_NS_URI)) {
                 sb.append("gray");
             } else {
                 sb.append("blue");
