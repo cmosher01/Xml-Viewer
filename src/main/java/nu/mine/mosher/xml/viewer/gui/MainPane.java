@@ -8,6 +8,7 @@ import javax.swing.*;
 import javax.swing.tree.TreePath;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.IOException;
 import java.util.*;
 
 
@@ -15,7 +16,7 @@ class MainPane extends JPanel {
     private TreePanel tree;
     private PropertiesPanel properties;
 
-    public MainPane(final DomTreeModel model) {
+    public MainPane(final DomTreeModel model, final FrameManager framer) {
         super(new BorderLayout(), true);
 
         setOpaque(true);
@@ -27,7 +28,7 @@ class MainPane extends JPanel {
 
         addNotify();
 
-        this.tree = createTreeControl(model);
+        this.tree = createTreeControl(model, framer);
         final JScrollPane scrlTree = new JScrollPane(this.tree);
         scrlTree.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         scrlTree.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
@@ -38,7 +39,7 @@ class MainPane extends JPanel {
         scrlProp.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS);
 
         final JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT, scrlTree, scrlProp);
-        final double ratio = 1.0 / 3.0;
+        final double ratio = 1.0 / 2.0;
         splitPane.setResizeWeight(ratio);
         splitPane.setDividerLocation((int)Math.round(ratio * width));
         add(splitPane);
@@ -61,24 +62,27 @@ class MainPane extends JPanel {
         this.tree.appendViewMenuItems(menuView);
     }
 
-    private TreePanel createTreeControl(final DomTreeModel model) {
-        final TreePanel tree = new TreePanel(model);
+    private TreePanel createTreeControl(final DomTreeModel model, final FrameManager framer) {
+        final TreePanel tree = new TreePanel(model, framer);
         tree.init();
         tree.addTreeSelectionListener(e -> {
             try {
-                final TreePath sel = e.getNewLeadSelectionPath();
-                final Optional<DomTreeNode> currentNode;
-                if (Objects.nonNull(sel)) {
-                    currentNode = Optional.ofNullable((DomTreeNode)sel.getLastPathComponent());
-                } else {
-                    currentNode = Optional.empty();
-                }
-                properties.display(currentNode);
+                displayNodeProperties(e.getNewLeadSelectionPath());
             } catch (final Throwable ex) {
                 throw new IllegalStateException(ex);
             }
         });
         return tree;
+    }
+
+    private void displayNodeProperties(final TreePath path) throws IOException {
+        final Optional<DomTreeNode> currentNode;
+        if (Objects.nonNull(path)) {
+            currentNode = Optional.ofNullable((DomTreeNode)path.getLastPathComponent());
+        } else {
+            currentNode = Optional.empty();
+        }
+        this.properties.display(currentNode);
     }
 
     private static int width() {

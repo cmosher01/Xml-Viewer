@@ -6,11 +6,12 @@ import org.slf4j.*;
 
 import java.util.prefs.Preferences;
 
-
 public class XmlViewer {
     private static final Logger log;
 
     static {
+        System.setProperty("org.slf4j.simpleLogger.showDateTime", "true");
+        System.setProperty("org.slf4j.simpleLogger.dateTimeFormat", "yyyy-MM-dd'T'HH:mm:ss.SSSZ");
         System.setProperty("org.slf4j.simpleLogger.logFile", LogFiles.getLogFileOf(XmlViewer.class).getPath());
         System.err.println(System.getProperty("org.slf4j.simpleLogger.logFile"));
         log = LoggerFactory.getLogger(XmlViewer.class);

@@ -42,7 +42,7 @@ public class FrameManager implements Closeable {
 
         this.frame.setJMenuBar(bar);
 
-        this.mainPane = new MainPane(this.model);
+        this.mainPane = new MainPane(this.model, this);
         this.frame.setContentPane(this.mainPane);
 
         this.frame.setCursor(Cursor.getPredefinedCursor(Cursor.DEFAULT_CURSOR));

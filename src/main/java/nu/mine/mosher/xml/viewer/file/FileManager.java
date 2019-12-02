@@ -59,7 +59,6 @@ public class FileManager {
                     this.document = FileUtil.asDom(opened, true);
                 } catch (final Exception e) {
                     LOG.warn("XML validation failed for {}", opened, e);
-//            XmlViewerGui.showMessage("Warning: XML validation failed. Will try to open without validation...");
                 }
                 this.document = FileUtil.asDom(opened, false);
             } catch (final Throwable e) {
@@ -117,7 +116,8 @@ public class FileManager {
 
     private void canceller(final FileOpenTask task, final JFrame frame) {
         final JDialog dialog = new JDialog(frame, "Wait");
-        final JLabel label = new JLabel("Parsing XML. This could take a while. Please wait...");
+        dialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        final JLabel label = new JLabel("Please wait...");
         label.setHorizontalAlignment(JLabel.CENTER);
 
         final JButton closeButton = new JButton("Cancel");

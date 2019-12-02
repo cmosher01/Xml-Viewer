@@ -2,10 +2,15 @@ package nu.mine.mosher.xml.viewer.gui;
 
 
 import nu.mine.mosher.xml.viewer.model.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.swing.*;
 import javax.swing.plaf.TreeUI;
 import javax.swing.tree.*;
+import java.awt.BorderLayout;
+import java.awt.Cursor;
+import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.KeyEvent;
 import java.util.*;
@@ -14,15 +19,18 @@ import static nu.mine.mosher.xml.viewer.XmlViewer.prefs;
 import static nu.mine.mosher.xml.viewer.gui.XmlViewerGui.ACCEL;
 
 
-public class TreePanel extends JTree {
+class TreePanel extends JTree {
     private int visualSize = prefZoom();
+    private FrameManager framer;
     private JMenuItem itemZoomIn;
     private JMenuItem itemZoomOut;
     private JMenuItem itemExpandAll;
     private JMenuItem itemCollapseAll;
+    private boolean expall;
 
-    public TreePanel(final DomTreeModel model) {
+    public TreePanel(final DomTreeModel model, final FrameManager framer) {
         super(model);
+        this.framer = framer;
     }
 
     public void init() {
@@ -68,7 +76,11 @@ public class TreePanel extends JTree {
 
         itemExpandAll = new JMenuItem("Expand all");
         itemExpandAll.setMnemonic(KeyEvent.VK_X);
-        itemExpandAll.addActionListener(e -> expandAll());
+        itemExpandAll.addActionListener(e -> {
+            final ExpandTask task = new ExpandTask();
+            canceller(task, this.framer.frame());
+            task.execute();
+        });
         menu.add(itemExpandAll);
 
         itemCollapseAll = new JMenuItem("Collapse all");
@@ -115,7 +127,11 @@ public class TreePanel extends JTree {
                 tree.setUI(null);
                 expandAll(tree, new TreePath(root), expand);
             } finally {
+                final Logger log = LoggerFactory.getLogger(this.getClass());
+                final long begin = System.currentTimeMillis();
+                // this is actually the time-consuming step
                 tree.setUI(treeUI);
+                log.info("getExpandedDescendants complete: "+(System.currentTimeMillis()-begin)+" ms");
             }
         }
     }
@@ -141,11 +157,9 @@ public class TreePanel extends JTree {
         return childExpandCalled;
     }
 
+    // override this to improve its efficiency
     @Override
     public Enumeration<TreePath> getExpandedDescendants(final TreePath path) {
-        if (!isExpanded(path)) {
-            return null;
-        }
         final ArrayList<TreePath> paths = new ArrayList<>(4096);
         getOpenedChild(path, paths);
         return Collections.enumeration(paths);
@@ -163,5 +177,59 @@ public class TreePanel extends JTree {
                 getOpenedChild(childPath, paths);
             }
         }
+    }
+
+
+
+
+
+
+
+
+    private class ExpandTask extends SwingWorker<Void, Void> {
+        private JDialog dialog;
+
+        @Override
+        protected Void doInBackground() {
+            expandAll();
+            return null;
+        }
+
+        @Override
+        protected void done() {
+            super.done();
+            this.dialog.setVisible(false);
+            this.dialog.dispose();
+        }
+
+        public void setCanceller(final JDialog dialog) {
+            this.dialog = dialog;
+        }
+    }
+
+
+
+    private void canceller(final ExpandTask task, final JFrame frame) {
+        final JDialog dialog = new JDialog(frame, "Wait");
+        dialog.setCursor(Cursor.getPredefinedCursor(Cursor.WAIT_CURSOR));
+        final JLabel label = new JLabel("Please wait...");
+        label.setHorizontalAlignment(JLabel.CENTER);
+
+        final JPanel closePanel = new JPanel();
+        closePanel.setLayout(new BoxLayout(closePanel, BoxLayout.LINE_AXIS));
+        closePanel.add(Box.createHorizontalGlue());
+        closePanel.setBorder(BorderFactory.createEmptyBorder(0, 0, 5, 5));
+
+        final JPanel contentPane = new JPanel(new BorderLayout());
+        contentPane.add(label, BorderLayout.CENTER);
+        contentPane.add(closePanel, BorderLayout.PAGE_END);
+        contentPane.setOpaque(true);
+        dialog.setContentPane(contentPane);
+
+        dialog.setSize(new Dimension(300, 150));
+        dialog.setLocationRelativeTo(frame);
+        dialog.setVisible(true);
+
+        task.setCanceller(dialog);
     }
 }

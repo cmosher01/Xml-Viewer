@@ -15,21 +15,14 @@ import static java.awt.Font.*;
 
 
 public class XmlViewerGui implements Closeable, Observer {
-    private static XmlViewerGui INSTANCE;
-
     public static void create() throws InvocationTargetException, InterruptedException {
         SwingUtilities.invokeAndWait(() -> {
             try {
-                INSTANCE = new XmlViewerGui();
-                INSTANCE.run();
+                new XmlViewerGui().run();
             } catch (Throwable e) {
                 throw new IllegalStateException(e);
             }
         });
-    }
-
-    public static void showMessage(final String message) {
-        INSTANCE.framer.showMessage(message);
     }
 
     private final DomTreeModel model = new DomTreeModel();
@@ -40,7 +33,7 @@ public class XmlViewerGui implements Closeable, Observer {
     }
 
 
-    public void run() {
+    private void run() {
         this.model.addObserver(this);
 
         setLookAndFeel();
@@ -62,13 +55,16 @@ public class XmlViewerGui implements Closeable, Observer {
         update(this.model, null);
     }
 
+    public void showMessage(final String message) {
+        this.framer.showMessage(message);
+    }
 
     public void update(final Observable observable, final Object unused) {
         this.framer.updateMenu();
         this.filer.updateMenu();
     }
 
-    public void setLookAndFeel() {
+    private void setLookAndFeel() {
         try {
             UIManager.setLookAndFeel(UIManager.getCrossPlatformLookAndFeelClassName());
         } catch (final Throwable e) {
