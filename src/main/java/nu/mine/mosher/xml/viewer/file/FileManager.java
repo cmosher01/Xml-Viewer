@@ -55,16 +55,19 @@ public class FileManager {
         @Override
         protected Void doInBackground() {
             try {
-                try {
-                    this.document = FileUtil.asDom(opened, true);
-                } catch (final Exception e) {
-                    LOG.warn("XML validation failed for {}", opened, e);
-                }
+                this.document = FileUtil.asDom(opened, true);
+                return null;
+            } catch (final Exception e) {
+                LOG.warn("XML validation failed for {}", opened, e);
+            }
+
+            try {
                 this.document = FileUtil.asDom(opened, false);
             } catch (final Throwable e) {
                 LOG.error("Error parsing XML file", e);
                 FileManager.this.framer.showMessage(e.toString());
             }
+
             return null;
         }
 
