@@ -51,6 +51,8 @@ public class XmlViewerGui implements Closeable, Observer {
         UIManager.put("Menu.font", font);
         UIManager.put("MenuItem.font", font);
 
+        System.setProperty("apple.laf.useScreenMenuBar", "true");
+
         final JMenuBar menubar = new JMenuBar();
         this.framer.init(menubar, this::close);
         appendMenus(menubar);
@@ -92,14 +94,18 @@ public class XmlViewerGui implements Closeable, Observer {
         menuHelp.setMnemonic(KeyEvent.VK_H);
         addAboutTo(menuHelp);
         bar.add(menuHelp);
+        if (Desktop.isDesktopSupported()) {
+            final Desktop desktop = Desktop.getDesktop();
+            if (desktop.isSupported(Desktop.Action.APP_ABOUT)) {
+                desktop.setAboutHandler(e -> about());
+            }
+        }
     }
 
     public static final int ACCEL = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
 
     private void addQuitTo(final JMenu menu) {
-        final JMenuItem itemFileExit = new JMenuItem("Quit");
-        itemFileExit.setMnemonic(KeyEvent.VK_Q);
-        itemFileExit.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_Q, ACCEL));
+        final JMenuItem itemFileExit = new JMenuItem("Exit");
         itemFileExit.addActionListener(e -> close());
         menu.add(itemFileExit);
     }
@@ -119,8 +125,8 @@ public class XmlViewerGui implements Closeable, Observer {
     private void about() {
         showMessage(
             "<html>" +
-            "<p style='font-size:22'>XML Viewer</p><br>" +
-            "Copyright © 2019, Christopher Alan Mosher, Shelton, Connecticut, USA<br>" +
+            "<p style='font-size:18'>XML Viewer</p><br>" +
+            "Copyright © 2019-2020, Christopher Alan Mosher, Shelton, Connecticut, USA<br>" +
             "https://github.com/cmosher01" +
             "</html>");
     }
