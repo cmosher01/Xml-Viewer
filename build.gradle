@@ -1,8 +1,62 @@
+plugins {
+    id 'org.openjfx.javafxplugin' version '0.0.9'
+    id 'org.beryx.jlink' version '2.22.2'
+    id 'com.coditory.manifest' version '0.1.8'
+}
+
 def inc(module) {
     apply from: "${projectDir}/gradle/${module}.gradle"
 }
 
 inc('version')
-inc('project')
+
+group = 'nu.mine.mosher.xml'
+
+java {
+    sourceCompatibility = JavaVersion.VERSION_13
+    modularity.inferModulePath.set true
+}
+
+tasks.withType(JavaCompile) {
+    options.compilerArgs << "-Xlint:deprecation"
+}
+
 inc('dependencies')
-inc('package')
+
+application {
+    mainModule.set 'nu.mine.mosher.xml.viewer'
+    mainClass.set 'nu.mine.mosher.xml.viewer.XmlViewer'
+}
+
+jar {
+    manifest {
+        attributes(
+            'Specification-Version': manifest.attributes.get('Implementation-Version'),
+            'Implementation-Version': manifest.attributes.get('Implementation-Version').toString()+"+"+manifest.attributes.get('SCM-Commit-Hash').toString()
+        )
+    }
+}
+
+def os = org.gradle.internal.os.OperatingSystem.current()
+println "detected OS: ${os}"
+
+jlink {
+    jpackage {
+        if (os.windows) {
+            installerOptions += [
+                '--win-dir-chooser',
+                '--win-menu',
+                '--win-shortcut'
+            ]
+        } else if (os.linux) {
+            installerOptions += [
+                '--linux-shortcut'
+            ]
+        }
+        installerOptions += [ '--verbose' ]
+    }
+}
+
+assemble {
+    dependsOn tasks.jpackage
+}

@@ -15,14 +15,17 @@ import static java.awt.Font.*;
 
 
 public class XmlViewerGui implements Closeable, Observer {
+    private static volatile Thread events;
     public static void create() throws InvocationTargetException, InterruptedException {
         SwingUtilities.invokeAndWait(() -> {
+            events = Thread.currentThread();
             try {
                 new XmlViewerGui().run();
             } catch (Throwable e) {
                 throw new IllegalStateException(e);
             }
         });
+        events.join();
     }
 
     private final DomTreeModel model = new DomTreeModel();

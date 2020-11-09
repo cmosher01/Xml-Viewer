@@ -28,12 +28,12 @@ public class StringUnicodeEncoderDecoder {
     private final static String DELIMITER = "\\\\u";
 
     // strip trailing newline
-    public static String filter(final String s) { // short name
-        String r = StringUnicodeEncoderDecoder.encodeStringToUnicodeSequence(s);
-        if (r.endsWith("\n")) {
-            r = r.substring(0, r.length()-1);
+    public static String filter(String s) { // short name
+        s = StringUnicodeEncoderDecoder.encodeStringToUnicodeSequence(s);
+        if (s.endsWith("\n")) {
+            s = s.substring(0, s.length()-1);
         }
-        return r;
+        return s;
     }
 
     /**

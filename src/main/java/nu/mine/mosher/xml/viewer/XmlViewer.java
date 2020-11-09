@@ -27,6 +27,7 @@ public class XmlViewer {
         } catch (final Throwable e) {
             log.error("program terminating", e);
         } finally {
+            log.info("program exiting");
             System.out.flush();
             System.err.flush();
         }
