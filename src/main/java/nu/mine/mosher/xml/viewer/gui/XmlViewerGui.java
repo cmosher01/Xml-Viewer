@@ -50,6 +50,8 @@ public class XmlViewerGui implements Closeable, Observer {
         UIManager.put("MenuBar.font", font);
         UIManager.put("Menu.font", font);
         UIManager.put("MenuItem.font", font);
+        UIManager.put("OptionPane.messageFont", font);
+        UIManager.put("List.font", font);
 
         System.setProperty("apple.laf.useScreenMenuBar", "true");
 
