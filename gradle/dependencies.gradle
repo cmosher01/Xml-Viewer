@@ -5,7 +5,9 @@ repositories {
 
 dependencies {
     implementation group: 'nu.mine.mosher.io', name: 'log-files', version: 'latest.integration'
+    implementation group: 'org.slf4j', name: 'jcl-over-slf4j', version: 'latest.integration'
+    implementation group: 'org.slf4j', name: 'log4j-over-slf4j', version: 'latest.integration'
+    implementation group: 'org.slf4j', name: 'jul-to-slf4j', version: 'latest.integration'
     implementation group: 'org.slf4j', name: 'slf4j-api', version: 'latest.integration'
-
-    runtimeOnly group: 'org.slf4j', name: 'slf4j-simple', version: 'latest.integration'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: 'latest.release'
 }

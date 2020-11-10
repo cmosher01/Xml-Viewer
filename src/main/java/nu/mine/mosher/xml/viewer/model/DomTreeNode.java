@@ -7,7 +7,7 @@ import org.w3c.dom.*;
 import javax.xml.XMLConstants;
 import java.util.*;
 
-import static nu.mine.mosher.xml.viewer.StringUnicodeEncoderDecoder.filter;
+import static nu.mine.mosher.xml.viewer.util.StringUnicodeEncoderDecoder.filter;
 import static org.w3c.dom.Node.*;
 
 

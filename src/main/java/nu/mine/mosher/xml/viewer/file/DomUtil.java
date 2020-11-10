@@ -6,7 +6,7 @@ import org.w3c.dom.*;
 import java.util.*;
 import java.util.function.Function;
 
-import static nu.mine.mosher.xml.viewer.StringUnicodeEncoderDecoder.filter;
+import static nu.mine.mosher.xml.viewer.util.StringUnicodeEncoderDecoder.filter;
 
 public class DomUtil {
     public static class NodeProp {

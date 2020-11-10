@@ -106,6 +106,7 @@ public class XmlViewerGui implements Closeable, Observer {
 
     private void addQuitTo(final JMenu menu) {
         final JMenuItem itemFileExit = new JMenuItem("Exit");
+        itemFileExit.setMnemonic(KeyEvent.VK_X);
         itemFileExit.addActionListener(e -> close());
         menu.add(itemFileExit);
     }

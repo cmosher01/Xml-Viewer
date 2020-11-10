@@ -1,4 +1,4 @@
-package nu.mine.mosher.xml.viewer;
+package nu.mine.mosher.xml.viewer.util;
 
 import java.util.Objects;
 

@@ -41,6 +41,10 @@ def os = org.gradle.internal.os.OperatingSystem.current()
 println "detected OS: ${os}"
 
 jlink {
+    mergedModule {
+        additive = true
+        requires 'org.slf4j'
+    }
     jpackage {
         if (os.windows) {
             installerOptions += [

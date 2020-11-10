@@ -7,7 +7,7 @@ import javax.swing.JTextArea;
 import java.io.IOException;
 import java.util.*;
 
-import static nu.mine.mosher.xml.viewer.StringUnicodeEncoderDecoder.filter;
+import static nu.mine.mosher.xml.viewer.util.StringUnicodeEncoderDecoder.filter;
 
 class PropertiesPanel extends JTextArea {
     public PropertiesPanel() {
