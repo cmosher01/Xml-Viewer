@@ -102,7 +102,7 @@ public class XmlViewerGui implements Closeable, Observer {
         }
     }
 
-    public static final int ACCEL = Toolkit.getDefaultToolkit().getMenuShortcutKeyMask();
+    public static final int ACCEL = Toolkit.getDefaultToolkit().getMenuShortcutKeyMaskEx();
 
     private void addQuitTo(final JMenu menu) {
         final JMenuItem itemFileExit = new JMenuItem("Exit");
