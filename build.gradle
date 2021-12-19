@@ -1,27 +1,33 @@
 plugins {
-    id 'org.openjfx.javafxplugin' version '0.0.9'
-    id 'org.beryx.jlink' version '2.22.2'
-    id 'com.coditory.manifest' version '0.1.8'
+    id 'application'
+    id 'org.openjfx.javafxplugin' version '0.0.10'
+    id 'org.beryx.jlink' version '2.24.4'
+    id 'com.coditory.manifest' version '0.1.14'
 }
 
-def inc(module) {
-    apply from: "${projectDir}/gradle/${module}.gradle"
-}
-
-inc('version')
+version="1.0.2"
 
 group = 'nu.mine.mosher.xml'
 
 java {
-    sourceCompatibility = JavaVersion.VERSION_13
+    toolchain {
+        languageVersion = JavaLanguageVersion.of 17
+    }
     modularity.inferModulePath.set true
 }
 
-tasks.withType(JavaCompile) {
-    options.compilerArgs << "-Xlint:deprecation"
+repositories {
+    mavenCentral()
 }
 
-inc('dependencies')
+dependencies {
+    implementation group: 'nu.mine.mosher.io', name: 'log-files', version: 'latest.integration'
+    implementation group: 'org.slf4j', name: 'jcl-over-slf4j', version: 'latest.integration'
+    implementation group: 'org.slf4j', name: 'log4j-over-slf4j', version: 'latest.integration'
+    implementation group: 'org.slf4j', name: 'jul-to-slf4j', version: 'latest.integration'
+    implementation group: 'org.slf4j', name: 'slf4j-api', version: 'latest.integration'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: 'latest.release'
+}
 
 application {
     mainModule.set 'nu.mine.mosher.xml.viewer'

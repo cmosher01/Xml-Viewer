@@ -4,7 +4,7 @@ image:
   - macOS
   - Visual Studio 2019
 
-stack: jdk 15
+stack: jdk 17
 
 for:
   - matrix:
@@ -19,7 +19,7 @@ for:
         - image: macOS
     install:
       - brew update >brew.log
-      - brew install --quiet adoptopenjdk
+      - brew install --quiet temurin
 
   - matrix:
       only:
@@ -27,7 +27,7 @@ for:
     install:
       - cinst wixtoolset
     environment:
-      JAVA_HOME: 'C:\Program Files\Java\jdk14'
+      JAVA_HOME: 'C:\Program Files\Java\jdk17'
 
 
 
