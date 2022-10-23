@@ -8,7 +8,7 @@ import org.w3c.dom.Document;
 
 import javax.swing.event.*;
 import javax.swing.tree.*;
-import java.io.*;
+import java.io.Closeable;
 import java.util.*;
 
 

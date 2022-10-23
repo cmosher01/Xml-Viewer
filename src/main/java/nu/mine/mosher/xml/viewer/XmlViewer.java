@@ -3,8 +3,8 @@ package nu.mine.mosher.xml.viewer;
 import ch.qos.logback.classic.*;
 import nu.mine.mosher.xml.viewer.gui.XmlViewerGui;
 import nu.mine.mosher.xml.viewer.util.*;
-import org.slf4j.*;
 import org.slf4j.Logger;
+import org.slf4j.*;
 
 import java.io.*;
 import java.nio.file.*;

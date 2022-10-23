@@ -2,16 +2,12 @@ package nu.mine.mosher.xml.viewer.gui;
 
 
 import nu.mine.mosher.xml.viewer.model.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.*;
 
 import javax.swing.*;
 import javax.swing.plaf.TreeUI;
 import javax.swing.tree.*;
-import java.awt.BorderLayout;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.util.*;
 
